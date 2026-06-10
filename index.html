@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pookie Brain Games 💖</title>
+
+<style>
+  body{
+    margin:0;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    background: linear-gradient(135deg,#ffd6e8,#fff1f8,#ffe3f1);
+    color:#7a1748;
+    text-align:center;
+  }
+
+  .container{
+    max-width:900px;
+    margin:auto;
+    padding:25px;
+  }
+
+  h1{
+    font-size:38px;
+    color:#ff4f9a;
+    text-shadow:2px 2px white;
+  }
+
+  .card{
+    background:white;
+    border-radius:25px;
+    padding:25px;
+    margin:25px 0;
+    box-shadow:0 8px 20px rgba(255,80,150,0.25);
+    border:3px solid #ffc1dc;
+  }
+
+  button{
+    background:#ff69b4;
+    color:white;
+    border:none;
+    padding:12px 22px;
+    border-radius:25px;
+    font-size:16px;
+    cursor:pointer;
+    margin:8px;
+  }
+
+  button:hover{
+    background:#ff2f92;
+  }
+
+  input{
+    padding:12px;
+    border-radius:15px;
+    border:2px solid #ff9fcb;
+    font-size:16px;
+    text-align:center;
+  }
+
+  .love{
+    font-size:20px;
+    color:#ff2f92;
+    font-weight:bold;
+  }
+
+  .heart{
+    font-size:40px;
+    animation: beat 1s infinite;
+  }
+
+  @keyframes beat{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.25);}
+  }
+
+  .footer{
+    margin-top:30px;
+    font-size:14px;
+    color:#9b2b61;
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <h1>💖 Pookie Brain Games 💖</h1>
+  <p class="love">For my cute baby, my smart queen, my forever love 💕</p>
+  <div class="heart">💗</div>
+
+  <div class="card">
+    <h2>🌸 Love Message</h2>
+    <p id="loveMsg">Click below for a cute message!</p>
+    <button onclick="showLove()">Show Love 💌</button>
+  </div>
+
+  <div class="card">
+    <h2>🧠 Memory Game</h2>
+    <p>Remember this number:</p>
+    <h2 id="memoryNum">---</h2>
+    <button onclick="startMemory()">Show Number</button>
+    <br><br>
+    <input id="memoryInput" placeholder="Type the number" />
+    <button onclick="checkMemory()">Check</button>
+    <p id="memoryResult"></p>
+  </div>
+
+  <div class="card">
+    <h2>➕ Cute Math Game</h2>
+    <p id="mathQ">Click start to get a question</p>
+    <input id="mathAns" placeholder="Answer" />
+    <button onclick="newMath()">Start / Next</button>
+    <button onclick="checkMath()">Check</button>
+    <p id="mathResult"></p>
+  </div>
+
+  <div class="card">
+    <h2>💘 Guess My Love</h2>
+    <p>How much do I love you?</p>
+    <button onclick="loveGuess('little')">Little</button>
+    <button onclick="loveGuess('medium')">Medium</button>
+    <button onclick="loveGuess('infinite')">Infinite</button>
+    <p id="guessResult"></p>
+  </div>
+
+  <div class="footer">
+    Made with unlimited love by your pookie 💞
+  </div>
+
+</div>
+
+<script>
+  const messages = [
+    "You are my favourite person in this whole world 💖",
+    "My brain becomes happy when I think about you 🧠💕",
+    "You are cute, smart, beautiful and mine 😘",
+    "Every moment with you feels like magic ✨",
+    "You are not just my love, you are my peace 🌸",
+    "My pookie deserves all happiness in the world 💗"
+  ];
+
+  function showLove(){
+    let msg = messages[Math.floor(Math.random()*messages.length)];
+    document.getElementById("loveMsg").innerHTML = msg;
+  }
+
+  let memoryAnswer = "";
+
+  function startMemory(){
+    memoryAnswer = Math.floor(1000 + Math.random()*9000).toString();
+    document.getElementById("memoryNum").innerHTML = memoryAnswer;
+    document.getElementById("memoryResult").innerHTML = "";
+
+    setTimeout(() => {
+      document.getElementById("memoryNum").innerHTML = "Hidden now 🙈";
+    }, 3000);
+  }
+
+  function checkMemory(){
+    let user = document.getElementById("memoryInput").value;
+    if(user === memoryAnswer){
+      document.getElementById("memoryResult").innerHTML = "Correct baby! You are so smart 😍🧠";
+    } else {
+      document.getElementById("memoryResult").innerHTML = "Oops pookie! Try again 💕 Correct was " + memoryAnswer;
+    }
+  }
+
+  let mathAnswer = 0;
+
+  function newMath(){
+    let a = Math.floor(Math.random()*20)+1;
+    let b = Math.floor(Math.random()*20)+1;
+    mathAnswer = a + b;
+    document.getElementById("mathQ").innerHTML = "What is " + a + " + " + b + " ?";
+    document.getElementById("mathAns").value = "";
+    document.getElementById("mathResult").innerHTML = "";
+  }
+
+  function checkMath(){
+    let ans = document.getElementById("mathAns").value;
+    if(Number(ans) === mathAnswer){
+      document.getElementById("mathResult").innerHTML = "Correct my genius girl 😘";
+    } else {
+      document.getElementById("mathResult").innerHTML = "Wrong but still cute 😭💕 Answer is " + mathAnswer;
+    }
+  }
+
+  function loveGuess(choice){
+    if(choice === "infinite"){
+      document.getElementById("guessResult").innerHTML = "Correct! I love you infinitely baby 💘♾️";
+    } else {
+      document.getElementById("guessResult").innerHTML = "Nooo pookie 😭 My love is infinite only ♾️💖";
+    }
+  }
+</script>
+
+</body>
+</html>
