@@ -1,310 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meenu's Pookie Brain Games 💖</title>
-
-<style>
-body{
-  margin:0;
-  font-family:'Comic Sans MS', cursive;
-  background:linear-gradient(135deg,#ffd6ec,#fff1f8,#ffe5f1);
-  color:#8b1e55;
-  text-align:center;
-}
-header{
-  padding:30px 15px;
-  background:#ff8ac2;
-  color:white;
-}
-h1{font-size:35px;}
-.container{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-}
-.card{
-  background:white;
-  margin:22px 0;
-  padding:22px;
-  border-radius:25px;
-  box-shadow:0 8px 20px rgba(255,80,150,0.25);
-  border:3px solid #ffc1df;
-}
-button{
-  background:#ff4fa3;
-  color:white;
-  border:none;
-  padding:11px 20px;
-  margin:6px;
-  border-radius:25px;
-  font-size:15px;
-  cursor:pointer;
-}
-button:hover{background:#e91e83;}
-input{
-  padding:10px;
-  border-radius:15px;
-  border:2px solid #ff9ccc;
-  text-align:center;
-}
-.love{
-  font-size:20px;
-  font-weight:bold;
-  color:#ff2f92;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(9,35px);
-  justify-content:center;
-  gap:4px;
-}
-.grid input{
-  width:30px;
-  height:30px;
-  padding:0;
-}
-.chess{
-  font-size:45px;
-  margin:15px;
-}
-.wheel{
-  width:240px;
-  height:240px;
-  border-radius:50%;
-  border:8px solid #ff4fa3;
-  margin:20px auto;
-  background:conic-gradient(#ff9ccc 0 60deg,#fff 60deg 120deg,#ffc1df 120deg 180deg,#ff85bd 180deg 240deg,#ffe5f1 240deg 300deg,#ff69b4 300deg 360deg);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  font-weight:bold;
-  transition:transform 3s ease;
-}
-footer{
-  padding:25px;
-  color:#9b2b61;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Midnight Manor - Two Player Murder Mystery</title>
+  <style>
+    :root{
+      --bg:#07070b;
+      --panel:#12121b;
+      --panel2:#1b1b2a;
+      --gold:#e6b65c;
+      --red:#b11226;
+      --text:#f4f0e8;
+      --muted:#b9b2a7;
+      --green:#48c78e;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top, rgba(177,18,38,.22), transparent 34%),
+        linear-gradient(135deg,#050507,#11111b 55%,#050507);
+      color:var(--text);
+      min-height:100vh;
+    }
+    .wrap{max-width:1100px;margin:auto;padding:22px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      padding:18px 0 10px;
+    }
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:52px;height:52px;border-radius:16px;
+      display:grid;place-items:center;
+      background:linear-gradient(145deg,var(--red),#371018);
+      box-shadow:0 0 30px rgba(177,18,38,.35);
+      font-size:28px;
+    }
+    h1{margin:0;font-size:clamp(25px,4vw,46px);letter-spacing:.8px}
+    .tag{color:var(--muted);margin-top:5px;font-size:14px}
+    .pill{border:1px solid rgba(230,182,92,.45);padding:8px 12px;border-radius:999px;color:var(--gold);font-size:13px}
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:22px;
+      backdrop-filter:blur(8px);
+    }
+    .hero{
+      display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:16px;
+    }
+    .scene{
+      min-height:360px;position:relative;overflow:hidden;
+      background:
+        linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.65)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='500'%3E%3Crect width='900' height='500' fill='%2311111b'/%3E%3Cpath d='M0 390h900v110H0z' fill='%2307070b'/%3E%3Cpath d='M80 390V120h140v270M310 390V80h190v310M600 390V135h190v255' fill='%231c1b29'/%3E%3Cpath d='M120 170h60v80h-60zM350 140h100v90H350zM650 185h70v75h-70z' fill='%23e6b65c' opacity='.35'/%3E%3Ccircle cx='710' cy='70' r='48' fill='%23e6b65c' opacity='.65'/%3E%3C/svg%3E");
+      background-size:cover;
+    }
+    .scene h2{font-size:34px;margin:0 0 10px}
+    .scene p{line-height:1.65;color:#ddd5ca;font-size:17px}
+    .blood{
+      position:absolute;right:-50px;bottom:-60px;width:220px;height:220px;
+      border-radius:50%;background:rgba(177,18,38,.45);filter:blur(3px);
+    }
+    .players{
+      display:grid;gap:14px;
+    }
+    input{
+      width:100%;padding:13px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.14);
+      background:#09090f;color:var(--text);font-size:16px;outline:none;
+    }
+    button{
+      border:0;border-radius:16px;padding:13px 16px;cursor:pointer;
+      background:linear-gradient(135deg,var(--gold),#8f5d1a);
+      color:#160d06;font-weight:800;font-size:15px;
+      box-shadow:0 12px 28px rgba(230,182,92,.2);
+      transition:.2s transform,.2s filter;
+    }
+    button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+    button.secondary{background:#252537;color:var(--text);box-shadow:none;border:1px solid rgba(255,255,255,.12)}
+    button.danger{background:linear-gradient(135deg,var(--red),#5d0713);color:white}
+    .hidden{display:none!important}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .status{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;
+    }
+    .stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:17px;padding:13px}
+    .stat b{display:block;color:var(--gold);font-size:22px}
+    .room-list,.suspects{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+    .room,.suspect{
+      background:var(--panel2);border:1px solid rgba(255,255,255,.1);
+      border-radius:18px;padding:15px;min-height:112px;
+    }
+    .room h3,.suspect h3{margin:0 0 8px;color:var(--gold)}
+    .room p,.suspect p,.small{color:var(--muted);line-height:1.45}
+    .clue{
+      border-left:4px solid var(--gold);
+      background:rgba(230,182,92,.08);
+      padding:12px 13px;border-radius:12px;margin:10px 0;
+    }
+    .turn{
+      color:var(--green);font-weight:800;
+    }
+    .log{
+      max-height:270px;overflow:auto;background:#09090f;border-radius:18px;
+      padding:14px;border:1px solid rgba(255,255,255,.08);
+    }
+    .log div{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);color:#d8d0c3}
+    .final{
+      font-size:20px;line-height:1.55;
+      background:rgba(177,18,38,.14);
+      border:1px solid rgba(177,18,38,.45);
+      border-radius:18px;padding:16px;
+    }
+    @media(max-width:850px){
+      .hero,.grid{grid-template-columns:1fr}
+      .status{grid-template-columns:1fr 1fr}
+      header{align-items:flex-start;flex-direction:column}
+    }
+  </style>
 </head>
-
 <body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">🕯️</div>
+      <div>
+        <h1>Midnight Manor</h1>
+        <div class="tag">A fun two-player murder mystery game</div>
+      </div>
+    </div>
+    <div class="pill">Best with 2 players on one phone/laptop</div>
+  </header>
 
-<header>
-  <h1>💖 Meenu's Pookie Brain Games 💖</h1>
-  <p>For my cute Meenu, my smart queen, my forever pookie 🧠💕</p>
-</header>
+  <section id="start" class="hero">
+    <div class="card scene">
+      <div class="blood"></div>
+      <h2>The clock strikes 12.</h2>
+      <p>
+        Lord Ashford is found dead inside Midnight Manor. The doors were locked.
+        Five suspects remain. Two detectives must search rooms, collect clues,
+        question suspects, and accuse the killer before the murderer escapes.
+      </p>
+      <p><b>Rule:</b> Each player gets turns. Search wisely. Wrong accusation gives the other player a chance to win.</p>
+    </div>
+    <div class="card players">
+      <h2>Enter Detectives</h2>
+      <input id="p1" placeholder="Player 1 name" value="Detective 1"/>
+      <input id="p2" placeholder="Player 2 name" value="Detective 2"/>
+      <button onclick="startGame()">Start Investigation</button>
+      <button class="secondary" onclick="showHow()">How to Play</button>
+      <p id="how" class="small hidden">
+        Search rooms to reveal clues. Question suspects for hints. When you feel confident, accuse someone.
+        The killer changes every new game.
+      </p>
+    </div>
+  </section>
 
-<div class="container">
+  <main id="game" class="hidden">
+    <div class="status">
+      <div class="stat">Current Turn <b id="turnName">-</b></div>
+      <div class="stat">Clues Found <b id="clueCount">0</b></div>
+      <div class="stat">Actions Left <b id="actionsLeft">12</b></div>
+      <div class="stat">Danger Level <b id="danger">Low</b></div>
+    </div>
 
-<div class="card">
-  <h2>💌 Love Message for Meenu</h2>
-  <p id="loveMsg" class="love">Click for a sweet message, Meenu 💕</p>
-  <button onclick="showLove()">Show Love</button>
+    <div class="grid">
+      <section class="card">
+        <h2>Search Rooms</h2>
+        <p class="small">Choose one room per turn. Some rooms hide stronger clues.</p>
+        <div id="rooms" class="room-list"></div>
+      </section>
+
+      <section class="card">
+        <h2>Question Suspects</h2>
+        <p class="small">Each suspect may lie, panic, or reveal something useful.</p>
+        <div id="suspects" class="suspects"></div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:16px">
+      <h2>Evidence Board</h2>
+      <div id="clues"></div>
+      <button class="secondary" onclick="nextTurn()">Skip / Next Turn</button>
+      <button class="danger" onclick="openAccuse()">Make Final Accusation</button>
+    </section>
+
+    <section id="accuseBox" class="card hidden" style="margin-top:16px">
+      <h2>Final Accusation</h2>
+      <p class="small">Choose carefully. A wrong accusation can cost you the case.</p>
+      <div id="accuseButtons" class="suspects"></div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2>Case Log</h2>
+      <div id="log" class="log"></div>
+    </section>
+  </main>
+
+  <section id="end" class="card hidden" style="margin-top:16px">
+    <h2 id="endTitle">Case Closed</h2>
+    <div id="endText" class="final"></div>
+    <br/>
+    <button onclick="location.reload()">Play Again</button>
+  </section>
 </div>
-
-<div class="card">
-  <h2>🧩 Sudoku for Meenu</h2>
-  <p>Fill missing numbers from 1 to 9.</p>
-  <div class="grid" id="sudoku"></div>
-  <button onclick="checkSudoku()">Check Sudoku</button>
-  <p id="sudokuResult"></p>
-</div>
-
-<div class="card">
-  <h2>♟️ Chess Puzzle</h2>
-  <p>Meenu, white to move. Which piece gives checkmate?</p>
-  <div class="chess">♔ ♕ ♖ ♗ ♘ ♙</div>
-  <button onclick="chessAns('queen')">Queen</button>
-  <button onclick="chessAns('rook')">Rook</button>
-  <button onclick="chessAns('knight')">Knight</button>
-  <p id="chessResult"></p>
-</div>
-
-<div class="card">
-  <h2>🧠 Memory Game</h2>
-  <p>Remember this number, Meenu:</p>
-  <h2 id="memoryNum">---</h2>
-  <button onclick="startMemory()">Show Number</button><br><br>
-  <input id="memoryInput" placeholder="Type number">
-  <button onclick="checkMemory()">Check</button>
-  <p id="memoryResult"></p>
-</div>
-
-<div class="card">
-  <h2>➕ Math Challenge</h2>
-  <p id="mathQ">Click start, Meenu!</p>
-  <input id="mathAns" placeholder="Answer">
-  <button onclick="newMath()">Start / Next</button>
-  <button onclick="checkMath()">Check</button>
-  <p id="mathResult"></p>
-</div>
-
-<div class="card">
-  <h2>🔤 Word Scramble</h2>
-  <p id="scrambleWord">NEEMU</p>
-  <input id="wordAns" placeholder="Correct word">
-  <button onclick="checkWord()">Check</button>
-  <p id="wordResult"></p>
-</div>
-
-<div class="card">
-  <h2>❓ Riddle Game</h2>
-  <p id="riddle">What has keys but no locks?</p>
-  <input id="riddleAns" placeholder="Answer">
-  <button onclick="checkRiddle()">Check</button>
-  <p id="riddleResult"></p>
-</div>
-
-<div class="card">
-  <h2>🌈 Pattern Game</h2>
-  <p>2, 4, 8, 16, ?</p>
-  <input id="patternAns" placeholder="Next number">
-  <button onclick="checkPattern()">Check</button>
-  <p id="patternResult"></p>
-</div>
-
-<div class="card">
-  <h2>💘 Love Quiz</h2>
-  <p>How much do I love Meenu?</p>
-  <button onclick="loveQuiz('little')">Little</button>
-  <button onclick="loveQuiz('medium')">Medium</button>
-  <button onclick="loveQuiz('infinite')">Infinite</button>
-  <p id="loveQuizResult"></p>
-</div>
-
-<div class="card">
-  <h2>🎡 Spin the Wheel</h2>
-  <p>Meenu, spin for age/random cute tasks 💕</p>
-  <div class="wheel" id="wheel">SPIN</div>
-  <button onclick="spinWheel()">Spin</button>
-  <p id="wheelResult"></p>
-</div>
-
-</div>
-
-<footer>
-  Made with unlimited love for Meenu 💖
-</footer>
 
 <script>
-const loveMessages=[
-"Meenu, you are my cutest pookie 💖",
-"My brain smiles when I think about you, Meenu 🧠💕",
-"Meenu, you are my peace, happiness and home 🌸",
-"My smart queen Meenu deserves all love in the world 👑",
-"Every game here is only for my Meenu baby 😘"
+const roomsData = [
+  {name:"Library", icon:"📚", text:"Dusty books, a torn page, and the smell of old smoke."},
+  {name:"Kitchen", icon:"🔪", text:"A missing knife, wet footprints, and broken glass."},
+  {name:"Garden", icon:"🌙", text:"Fresh mud, crushed roses, and one glove."},
+  {name:"Study Room", icon:"🖋️", text:"A half-written letter lies beside spilled ink."},
+  {name:"Ballroom", icon:"🎻", text:"Music sheets scattered across the blood-red carpet."},
+  {name:"Cellar", icon:"🍷", text:"Wine barrels, a secret tunnel, and a cold breeze."}
 ];
 
-function showLove(){
- document.getElementById("loveMsg").innerHTML =
- loveMessages[Math.floor(Math.random()*loveMessages.length)];
-}
-
-const sudokuPuzzle=[
-5,3,"", "",7,"", "", "", "",
-6,"","",1,9,5,"","","",
-"",9,8,"","","","",6,"",
-8,"","","",6,"","","",3,
-4,"","",8,"",3,"","",1,
-7,"","","",2,"","","",6,
-"",6,"","","","",2,8,"",
-"","","",4,1,9,"","",5,
-"","","","",8,"","",7,9
+const suspectsData = [
+  {name:"Lady Violet", role:"Ashford's elegant wife", emoji:"💃"},
+  {name:"Mr. Graves", role:"The silent butler", emoji:"🧤"},
+  {name:"Chef Bruno", role:"The angry cook", emoji:"👨‍🍳"},
+  {name:"Elena Reed", role:"The jealous niece", emoji:"🎭"},
+  {name:"Dr. Crowe", role:"The family doctor", emoji:"💼"}
 ];
 
-function loadSudoku(){
- let box=document.getElementById("sudoku");
- sudokuPuzzle.forEach(n=>{
-  let input=document.createElement("input");
-  input.value=n;
-  if(n!==""){input.disabled=true;}
-  box.appendChild(input);
- });
-}
-loadSudoku();
+const killerClues = {
+  "Lady Violet": [
+    "A violet perfume smell was found near the body.",
+    "The victim's wedding ring was missing.",
+    "A torn silk cloth matches Lady Violet's dress."
+  ],
+  "Mr. Graves": [
+    "A white glove with wine stains was found in the garden.",
+    "The locked door had no damage, suggesting someone with keys.",
+    "A servant bell rang exactly two minutes before the scream."
+  ],
+  "Chef Bruno": [
+    "The missing kitchen knife was recently sharpened.",
+    "A burnt note says: 'You ruined my life, Ashford.'",
+    "Flour marks were found near the study door."
+  ],
+  "Elena Reed": [
+    "A theatre mask was hidden behind the curtains.",
+    "Ashford's will was changed yesterday, removing Elena.",
+    "A red ribbon from Elena's hair was found in the cellar."
+  ],
+  "Dr. Crowe": [
+    "A medicine vial was found under the table.",
+    "The doctor lied about the victim's time of death.",
+    "A prescription paper had fresh blood on its corner."
+  ]
+};
 
-function checkSudoku(){
- document.getElementById("sudokuResult").innerHTML =
- "Good try Meenu 💕 Sudoku is for practice, not pressure!";
-}
+let players = [];
+let turn = 0;
+let actions = 12;
+let killer = "";
+let clues = [];
+let asked = {};
+let searched = {};
 
-function chessAns(ans){
- document.getElementById("chessResult").innerHTML =
- ans==="queen" ? "Correct Meenu! Queen is powerful like you 👑♟️" : "Nice try pookie 💕 Try Queen!";
-}
-
-let memoryAnswer="";
-function startMemory(){
- memoryAnswer=Math.floor(1000+Math.random()*9000).toString();
- document.getElementById("memoryNum").innerHTML=memoryAnswer;
- setTimeout(()=>{document.getElementById("memoryNum").innerHTML="Hidden 🙈";},3000);
-}
-function checkMemory(){
- let val=document.getElementById("memoryInput").value;
- document.getElementById("memoryResult").innerHTML =
- val===memoryAnswer ? "Correct Meenu! Super brain 😍" : "Oops pookie, correct was "+memoryAnswer;
-}
-
-let mathAnswer=0;
-function newMath(){
- let a=Math.floor(Math.random()*30)+1;
- let b=Math.floor(Math.random()*30)+1;
- mathAnswer=a+b;
- document.getElementById("mathQ").innerHTML=`Meenu, what is ${a} + ${b}?`;
-}
-function checkMath(){
- let ans=document.getElementById("mathAns").value;
- document.getElementById("mathResult").innerHTML =
- Number(ans)===mathAnswer ? "Correct my genius Meenu 😘" : "Wrong but still cute 💕 Answer: "+mathAnswer;
+function showHow(){
+  document.getElementById("how").classList.toggle("hidden");
 }
 
-function checkWord(){
- let ans=document.getElementById("wordAns").value.toLowerCase();
- document.getElementById("wordResult").innerHTML =
- ans==="meenu" ? "Correct! The sweetest word is Meenu 💖" : "Try again pookie!";
+function startGame(){
+  players = [
+    document.getElementById("p1").value.trim() || "Detective 1",
+    document.getElementById("p2").value.trim() || "Detective 2"
+  ];
+  killer = suspectsData[Math.floor(Math.random()*suspectsData.length)].name;
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  render();
+  addLog("The storm begins. The manor doors are locked. " + players[0] + " starts the investigation.");
 }
 
-function checkRiddle(){
- let ans=document.getElementById("riddleAns").value.toLowerCase();
- document.getElementById("riddleResult").innerHTML =
- ans.includes("piano") ? "Correct Meenu! 🎹💕" : "Hint: It makes music!";
+function render(){
+  document.getElementById("turnName").textContent = players[turn];
+  document.getElementById("clueCount").textContent = clues.length;
+  document.getElementById("actionsLeft").textContent = actions;
+  document.getElementById("danger").textContent = actions > 8 ? "Low" : actions > 4 ? "Rising" : "Deadly";
+
+  document.getElementById("rooms").innerHTML = roomsData.map(r => `
+    <div class="room">
+      <h3>${r.icon} ${r.name}</h3>
+      <p>${r.text}</p>
+      <button onclick="searchRoom('${r.name}')" ${searched[r.name] ? "disabled" : ""}>Search</button>
+    </div>
+  `).join("");
+
+  document.getElementById("suspects").innerHTML = suspectsData.map(s => `
+    <div class="suspect">
+      <h3>${s.emoji} ${s.name}</h3>
+      <p>${s.role}</p>
+      <button class="secondary" onclick="question('${s.name}')" ${asked[s.name] ? "disabled" : ""}>Question</button>
+    </div>
+  `).join("");
+
+  document.getElementById("clues").innerHTML = clues.length
+    ? clues.map(c => `<div class="clue">🔍 ${c}</div>`).join("")
+    : `<p class="small">No clues yet. Search the manor.</p>`;
+
+  document.getElementById("accuseButtons").innerHTML = suspectsData.map(s => `
+    <button class="danger" onclick="accuse('${s.name}')">${s.emoji} Accuse ${s.name}</button>
+  `).join("");
 }
 
-function checkPattern(){
- let ans=document.getElementById("patternAns").value;
- document.getElementById("patternResult").innerHTML =
- ans=="32" ? "Correct Meenu! Pattern queen 🌈" : "Try again baby 💕";
+function searchRoom(room){
+  if(actions <= 0) return endGame(false, "Time is over. The killer escaped through the old tunnel.");
+  searched[room] = true;
+  actions--;
+
+  let possible = killerClues[killer];
+  let clue;
+  if(clues.length < 3 && Math.random() > 0.25){
+    clue = possible[clues.length];
+  } else {
+    const fake = [
+      "The candle was blown out recently.",
+      "Someone moved the body after death.",
+      "A clock stopped at exactly 11:47 PM.",
+      "The victim was expecting a visitor.",
+      "A window was open, but the dust outside was untouched."
+    ];
+    clue = fake[Math.floor(Math.random()*fake.length)];
+  }
+  clues.push(clue);
+  addLog(players[turn] + " searched the " + room + " and found: " + clue);
+  nextTurn(false);
 }
 
-function loveQuiz(ans){
- document.getElementById("loveQuizResult").innerHTML =
- ans==="infinite" ? "Correct! I love Meenu infinitely ♾️💖" : "Nooo 😭 My love for Meenu is infinite only!";
+function question(name){
+  if(actions <= 0) return endGame(false, "Time is over. The killer escaped through the old tunnel.");
+  asked[name] = true;
+  actions--;
+
+  let line = "";
+  if(name === killer){
+    const guiltyLines = [
+      "They avoid eye contact and whisper, 'Some secrets deserve to stay buried.'",
+      "Their hands tremble when the murder weapon is mentioned.",
+      "They give an alibi, but the timing does not match the clock."
+    ];
+    line = guiltyLines[Math.floor(Math.random()*guiltyLines.length)];
+  } else {
+    const innocentLines = [
+      "They reveal that they heard footsteps near the study.",
+      "They say the victim argued loudly with someone before midnight.",
+      "They insist they saw a shadow moving toward the cellar."
+    ];
+    line = innocentLines[Math.floor(Math.random()*innocentLines.length)];
+  }
+  clues.push(name + " said: " + line);
+  addLog(players[turn] + " questioned " + name + ". " + line);
+  nextTurn(false);
 }
 
-let rotation=0;
-const wheelItems=[
-"Age 18 forever cute 💕",
-"Meenu gets one chocolate 🍫",
-"Send a cute selfie 😘",
-"Brain queen reward 👑",
-"One tight hug 🤗",
-"Say I love you 💖",
-"Random dare: smile now 😊",
-"Princess Meenu wins 🌸"
-];
+function nextTurn(manual=true){
+  if(manual){
+    actions--;
+    addLog(players[turn] + " skipped the turn.");
+  }
+  if(actions <= 0) return endGame(false, "Time is over. The killer escaped into the rain.");
+  turn = turn === 0 ? 1 : 0;
+  render();
+}
 
-function spinWheel(){
- rotation += Math.floor(1000 + Math.random()*2000);
- document.getElementById("wheel").style.transform=`rotate(${rotation}deg)`;
- let item=wheelItems[Math.floor(Math.random()*wheelItems.length)];
- setTimeout(()=>{
-  document.getElementById("wheelResult").innerHTML=item;
- },3000);
+function openAccuse(){
+  document.getElementById("accuseBox").classList.toggle("hidden");
+}
+
+function accuse(name){
+  if(name === killer){
+    endGame(true, players[turn] + " solved the case! The killer was " + killer + ".");
+  } else {
+    endGame(false, players[turn] + " accused " + name + ", but that was wrong. The real killer was " + killer + ".");
+  }
+}
+
+function endGame(win, message){
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("end").classList.remove("hidden");
+  document.getElementById("endTitle").textContent = win ? "🏆 Case Closed!" : "💀 Case Failed!";
+  document.getElementById("endText").innerHTML =
+    message + "<br><br><b>Final Reveal:</b> " + revealStory(killer);
+}
+
+function revealStory(k){
+  const stories = {
+    "Lady Violet":"Lady Violet killed Ashford after discovering he planned to leave the entire estate to someone else.",
+    "Mr. Graves":"Mr. Graves used his master key, entered quietly, and took revenge for years of humiliation.",
+    "Chef Bruno":"Chef Bruno snapped after Ashford destroyed his career and stole his family recipe.",
+    "Elena Reed":"Elena murdered Ashford after he removed her name from the will.",
+    "Dr. Crowe":"Dr. Crowe poisoned Ashford first, then staged the room to look like a violent murder."
+  };
+  return stories[k];
+}
+
+function addLog(text){
+  const log = document.getElementById("log");
+  const div = document.createElement("div");
+  div.textContent = "• " + text;
+  log.prepend(div);
 }
 </script>
-
 </body>
 </html>
