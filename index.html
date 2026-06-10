@@ -1,198 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pookie Brain Games 💖</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meenu's Pookie Brain Games 💖</title>
 
 <style>
-  body{
-    margin:0;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    background: linear-gradient(135deg,#ffd6e8,#fff1f8,#ffe3f1);
-    color:#7a1748;
-    text-align:center;
-  }
-
-  .container{
-    max-width:900px;
-    margin:auto;
-    padding:25px;
-  }
-
-  h1{
-    font-size:38px;
-    color:#ff4f9a;
-    text-shadow:2px 2px white;
-  }
-
-  .card{
-    background:white;
-    border-radius:25px;
-    padding:25px;
-    margin:25px 0;
-    box-shadow:0 8px 20px rgba(255,80,150,0.25);
-    border:3px solid #ffc1dc;
-  }
-
-  button{
-    background:#ff69b4;
-    color:white;
-    border:none;
-    padding:12px 22px;
-    border-radius:25px;
-    font-size:16px;
-    cursor:pointer;
-    margin:8px;
-  }
-
-  button:hover{
-    background:#ff2f92;
-  }
-
-  input{
-    padding:12px;
-    border-radius:15px;
-    border:2px solid #ff9fcb;
-    font-size:16px;
-    text-align:center;
-  }
-
-  .love{
-    font-size:20px;
-    color:#ff2f92;
-    font-weight:bold;
-  }
-
-  .heart{
-    font-size:40px;
-    animation: beat 1s infinite;
-  }
-
-  @keyframes beat{
-    0%,100%{transform:scale(1);}
-    50%{transform:scale(1.25);}
-  }
-
-  .footer{
-    margin-top:30px;
-    font-size:14px;
-    color:#9b2b61;
-  }
+body{
+  margin:0;
+  font-family:'Comic Sans MS', cursive;
+  background:linear-gradient(135deg,#ffd6ec,#fff1f8,#ffe5f1);
+  color:#8b1e55;
+  text-align:center;
+}
+header{
+  padding:30px 15px;
+  background:#ff8ac2;
+  color:white;
+}
+h1{font-size:35px;}
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:white;
+  margin:22px 0;
+  padding:22px;
+  border-radius:25px;
+  box-shadow:0 8px 20px rgba(255,80,150,0.25);
+  border:3px solid #ffc1df;
+}
+button{
+  background:#ff4fa3;
+  color:white;
+  border:none;
+  padding:11px 20px;
+  margin:6px;
+  border-radius:25px;
+  font-size:15px;
+  cursor:pointer;
+}
+button:hover{background:#e91e83;}
+input{
+  padding:10px;
+  border-radius:15px;
+  border:2px solid #ff9ccc;
+  text-align:center;
+}
+.love{
+  font-size:20px;
+  font-weight:bold;
+  color:#ff2f92;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(9,35px);
+  justify-content:center;
+  gap:4px;
+}
+.grid input{
+  width:30px;
+  height:30px;
+  padding:0;
+}
+.chess{
+  font-size:45px;
+  margin:15px;
+}
+.wheel{
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  border:8px solid #ff4fa3;
+  margin:20px auto;
+  background:conic-gradient(#ff9ccc 0 60deg,#fff 60deg 120deg,#ffc1df 120deg 180deg,#ff85bd 180deg 240deg,#ffe5f1 240deg 300deg,#ff69b4 300deg 360deg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:bold;
+  transition:transform 3s ease;
+}
+footer{
+  padding:25px;
+  color:#9b2b61;
+}
 </style>
 </head>
 
 <body>
+
+<header>
+  <h1>💖 Meenu's Pookie Brain Games 💖</h1>
+  <p>For my cute Meenu, my smart queen, my forever pookie 🧠💕</p>
+</header>
+
 <div class="container">
 
-  <h1>💖 Pookie Brain Games 💖</h1>
-  <p class="love">For my cute baby, my smart queen, my forever love 💕</p>
-  <div class="heart">💗</div>
+<div class="card">
+  <h2>💌 Love Message for Meenu</h2>
+  <p id="loveMsg" class="love">Click for a sweet message, Meenu 💕</p>
+  <button onclick="showLove()">Show Love</button>
+</div>
 
-  <div class="card">
-    <h2>🌸 Love Message</h2>
-    <p id="loveMsg">Click below for a cute message!</p>
-    <button onclick="showLove()">Show Love 💌</button>
-  </div>
+<div class="card">
+  <h2>🧩 Sudoku for Meenu</h2>
+  <p>Fill missing numbers from 1 to 9.</p>
+  <div class="grid" id="sudoku"></div>
+  <button onclick="checkSudoku()">Check Sudoku</button>
+  <p id="sudokuResult"></p>
+</div>
 
-  <div class="card">
-    <h2>🧠 Memory Game</h2>
-    <p>Remember this number:</p>
-    <h2 id="memoryNum">---</h2>
-    <button onclick="startMemory()">Show Number</button>
-    <br><br>
-    <input id="memoryInput" placeholder="Type the number" />
-    <button onclick="checkMemory()">Check</button>
-    <p id="memoryResult"></p>
-  </div>
+<div class="card">
+  <h2>♟️ Chess Puzzle</h2>
+  <p>Meenu, white to move. Which piece gives checkmate?</p>
+  <div class="chess">♔ ♕ ♖ ♗ ♘ ♙</div>
+  <button onclick="chessAns('queen')">Queen</button>
+  <button onclick="chessAns('rook')">Rook</button>
+  <button onclick="chessAns('knight')">Knight</button>
+  <p id="chessResult"></p>
+</div>
 
-  <div class="card">
-    <h2>➕ Cute Math Game</h2>
-    <p id="mathQ">Click start to get a question</p>
-    <input id="mathAns" placeholder="Answer" />
-    <button onclick="newMath()">Start / Next</button>
-    <button onclick="checkMath()">Check</button>
-    <p id="mathResult"></p>
-  </div>
+<div class="card">
+  <h2>🧠 Memory Game</h2>
+  <p>Remember this number, Meenu:</p>
+  <h2 id="memoryNum">---</h2>
+  <button onclick="startMemory()">Show Number</button><br><br>
+  <input id="memoryInput" placeholder="Type number">
+  <button onclick="checkMemory()">Check</button>
+  <p id="memoryResult"></p>
+</div>
 
-  <div class="card">
-    <h2>💘 Guess My Love</h2>
-    <p>How much do I love you?</p>
-    <button onclick="loveGuess('little')">Little</button>
-    <button onclick="loveGuess('medium')">Medium</button>
-    <button onclick="loveGuess('infinite')">Infinite</button>
-    <p id="guessResult"></p>
-  </div>
+<div class="card">
+  <h2>➕ Math Challenge</h2>
+  <p id="mathQ">Click start, Meenu!</p>
+  <input id="mathAns" placeholder="Answer">
+  <button onclick="newMath()">Start / Next</button>
+  <button onclick="checkMath()">Check</button>
+  <p id="mathResult"></p>
+</div>
 
-  <div class="footer">
-    Made with unlimited love by your pookie 💞
-  </div>
+<div class="card">
+  <h2>🔤 Word Scramble</h2>
+  <p id="scrambleWord">NEEMU</p>
+  <input id="wordAns" placeholder="Correct word">
+  <button onclick="checkWord()">Check</button>
+  <p id="wordResult"></p>
+</div>
+
+<div class="card">
+  <h2>❓ Riddle Game</h2>
+  <p id="riddle">What has keys but no locks?</p>
+  <input id="riddleAns" placeholder="Answer">
+  <button onclick="checkRiddle()">Check</button>
+  <p id="riddleResult"></p>
+</div>
+
+<div class="card">
+  <h2>🌈 Pattern Game</h2>
+  <p>2, 4, 8, 16, ?</p>
+  <input id="patternAns" placeholder="Next number">
+  <button onclick="checkPattern()">Check</button>
+  <p id="patternResult"></p>
+</div>
+
+<div class="card">
+  <h2>💘 Love Quiz</h2>
+  <p>How much do I love Meenu?</p>
+  <button onclick="loveQuiz('little')">Little</button>
+  <button onclick="loveQuiz('medium')">Medium</button>
+  <button onclick="loveQuiz('infinite')">Infinite</button>
+  <p id="loveQuizResult"></p>
+</div>
+
+<div class="card">
+  <h2>🎡 Spin the Wheel</h2>
+  <p>Meenu, spin for age/random cute tasks 💕</p>
+  <div class="wheel" id="wheel">SPIN</div>
+  <button onclick="spinWheel()">Spin</button>
+  <p id="wheelResult"></p>
+</div>
 
 </div>
 
+<footer>
+  Made with unlimited love for Meenu 💖
+</footer>
+
 <script>
-  const messages = [
-    "You are my favourite person in this whole world 💖",
-    "My brain becomes happy when I think about you 🧠💕",
-    "You are cute, smart, beautiful and mine 😘",
-    "Every moment with you feels like magic ✨",
-    "You are not just my love, you are my peace 🌸",
-    "My pookie deserves all happiness in the world 💗"
-  ];
+const loveMessages=[
+"Meenu, you are my cutest pookie 💖",
+"My brain smiles when I think about you, Meenu 🧠💕",
+"Meenu, you are my peace, happiness and home 🌸",
+"My smart queen Meenu deserves all love in the world 👑",
+"Every game here is only for my Meenu baby 😘"
+];
 
-  function showLove(){
-    let msg = messages[Math.floor(Math.random()*messages.length)];
-    document.getElementById("loveMsg").innerHTML = msg;
-  }
+function showLove(){
+ document.getElementById("loveMsg").innerHTML =
+ loveMessages[Math.floor(Math.random()*loveMessages.length)];
+}
 
-  let memoryAnswer = "";
+const sudokuPuzzle=[
+5,3,"", "",7,"", "", "", "",
+6,"","",1,9,5,"","","",
+"",9,8,"","","","",6,"",
+8,"","","",6,"","","",3,
+4,"","",8,"",3,"","",1,
+7,"","","",2,"","","",6,
+"",6,"","","","",2,8,"",
+"","","",4,1,9,"","",5,
+"","","","",8,"","",7,9
+];
 
-  function startMemory(){
-    memoryAnswer = Math.floor(1000 + Math.random()*9000).toString();
-    document.getElementById("memoryNum").innerHTML = memoryAnswer;
-    document.getElementById("memoryResult").innerHTML = "";
+function loadSudoku(){
+ let box=document.getElementById("sudoku");
+ sudokuPuzzle.forEach(n=>{
+  let input=document.createElement("input");
+  input.value=n;
+  if(n!==""){input.disabled=true;}
+  box.appendChild(input);
+ });
+}
+loadSudoku();
 
-    setTimeout(() => {
-      document.getElementById("memoryNum").innerHTML = "Hidden now 🙈";
-    }, 3000);
-  }
+function checkSudoku(){
+ document.getElementById("sudokuResult").innerHTML =
+ "Good try Meenu 💕 Sudoku is for practice, not pressure!";
+}
 
-  function checkMemory(){
-    let user = document.getElementById("memoryInput").value;
-    if(user === memoryAnswer){
-      document.getElementById("memoryResult").innerHTML = "Correct baby! You are so smart 😍🧠";
-    } else {
-      document.getElementById("memoryResult").innerHTML = "Oops pookie! Try again 💕 Correct was " + memoryAnswer;
-    }
-  }
+function chessAns(ans){
+ document.getElementById("chessResult").innerHTML =
+ ans==="queen" ? "Correct Meenu! Queen is powerful like you 👑♟️" : "Nice try pookie 💕 Try Queen!";
+}
 
-  let mathAnswer = 0;
+let memoryAnswer="";
+function startMemory(){
+ memoryAnswer=Math.floor(1000+Math.random()*9000).toString();
+ document.getElementById("memoryNum").innerHTML=memoryAnswer;
+ setTimeout(()=>{document.getElementById("memoryNum").innerHTML="Hidden 🙈";},3000);
+}
+function checkMemory(){
+ let val=document.getElementById("memoryInput").value;
+ document.getElementById("memoryResult").innerHTML =
+ val===memoryAnswer ? "Correct Meenu! Super brain 😍" : "Oops pookie, correct was "+memoryAnswer;
+}
 
-  function newMath(){
-    let a = Math.floor(Math.random()*20)+1;
-    let b = Math.floor(Math.random()*20)+1;
-    mathAnswer = a + b;
-    document.getElementById("mathQ").innerHTML = "What is " + a + " + " + b + " ?";
-    document.getElementById("mathAns").value = "";
-    document.getElementById("mathResult").innerHTML = "";
-  }
+let mathAnswer=0;
+function newMath(){
+ let a=Math.floor(Math.random()*30)+1;
+ let b=Math.floor(Math.random()*30)+1;
+ mathAnswer=a+b;
+ document.getElementById("mathQ").innerHTML=`Meenu, what is ${a} + ${b}?`;
+}
+function checkMath(){
+ let ans=document.getElementById("mathAns").value;
+ document.getElementById("mathResult").innerHTML =
+ Number(ans)===mathAnswer ? "Correct my genius Meenu 😘" : "Wrong but still cute 💕 Answer: "+mathAnswer;
+}
 
-  function checkMath(){
-    let ans = document.getElementById("mathAns").value;
-    if(Number(ans) === mathAnswer){
-      document.getElementById("mathResult").innerHTML = "Correct my genius girl 😘";
-    } else {
-      document.getElementById("mathResult").innerHTML = "Wrong but still cute 😭💕 Answer is " + mathAnswer;
-    }
-  }
+function checkWord(){
+ let ans=document.getElementById("wordAns").value.toLowerCase();
+ document.getElementById("wordResult").innerHTML =
+ ans==="meenu" ? "Correct! The sweetest word is Meenu 💖" : "Try again pookie!";
+}
 
-  function loveGuess(choice){
-    if(choice === "infinite"){
-      document.getElementById("guessResult").innerHTML = "Correct! I love you infinitely baby 💘♾️";
-    } else {
-      document.getElementById("guessResult").innerHTML = "Nooo pookie 😭 My love is infinite only ♾️💖";
-    }
-  }
+function checkRiddle(){
+ let ans=document.getElementById("riddleAns").value.toLowerCase();
+ document.getElementById("riddleResult").innerHTML =
+ ans.includes("piano") ? "Correct Meenu! 🎹💕" : "Hint: It makes music!";
+}
+
+function checkPattern(){
+ let ans=document.getElementById("patternAns").value;
+ document.getElementById("patternResult").innerHTML =
+ ans=="32" ? "Correct Meenu! Pattern queen 🌈" : "Try again baby 💕";
+}
+
+function loveQuiz(ans){
+ document.getElementById("loveQuizResult").innerHTML =
+ ans==="infinite" ? "Correct! I love Meenu infinitely ♾️💖" : "Nooo 😭 My love for Meenu is infinite only!";
+}
+
+let rotation=0;
+const wheelItems=[
+"Age 18 forever cute 💕",
+"Meenu gets one chocolate 🍫",
+"Send a cute selfie 😘",
+"Brain queen reward 👑",
+"One tight hug 🤗",
+"Say I love you 💖",
+"Random dare: smile now 😊",
+"Princess Meenu wins 🌸"
+];
+
+function spinWheel(){
+ rotation += Math.floor(1000 + Math.random()*2000);
+ document.getElementById("wheel").style.transform=`rotate(${rotation}deg)`;
+ let item=wheelItems[Math.floor(Math.random()*wheelItems.length)];
+ setTimeout(()=>{
+  document.getElementById("wheelResult").innerHTML=item;
+ },3000);
+}
 </script>
 
 </body>
