@@ -1,327 +1,353 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>3 Player Game Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3 Player Crorepati Fun Quiz</title>
 <style>
-*{box-sizing:border-box;font-family:Poppins,Arial}
+*{box-sizing:border-box;font-family:Poppins,Arial,sans-serif}
 body{
-margin:0;min-height:100vh;color:white;padding:15px;
-background:radial-gradient(circle at top,#ffafcc 0,#3a0ca3 35%,#111827 80%);
+  margin:0;min-height:100vh;color:white;padding:15px;
+  background:radial-gradient(circle at top,#243bff 0,#090979 35%,#020024 85%);
 }
 .app{max-width:950px;margin:auto}
-h1{text-align:center;margin:10px 0;font-size:34px}
+h1{text-align:center;font-size:34px;margin:10px 0}
 .card{
-background:rgba(255,255,255,.13);backdrop-filter:blur(14px);
-border:1px solid rgba(255,255,255,.22);border-radius:24px;
-padding:18px;margin:14px 0;box-shadow:0 20px 45px #0006
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+  border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 20px 50px #0007;
 }
-input,button,select{
-width:100%;padding:14px;border:0;border-radius:15px;margin:7px 0;font-size:16px
+input,button{
+  width:100%;padding:14px;border:0;border-radius:15px;margin:7px 0;font-size:16px;
 }
-button{font-weight:900;background:#ffd166;color:#111;cursor:pointer}
-.green{background:#80ed99}.pink{background:#ffafcc}.blue{background:#90dbf4}.red{background:#ff6b6b;color:white}
+button{cursor:pointer;font-weight:900;background:#ffd166;color:#111}
+button:hover{transform:scale(1.02)}
 .hidden{display:none}
-.room{text-align:center;color:#ffd166;font-size:30px;font-weight:900;letter-spacing:3px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.player{text-align:center;background:#0005;border-radius:18px;padding:13px}
+.players{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.player{
+  background:#0005;border-radius:18px;padding:12px;text-align:center;border:2px solid transparent;
+}
+.active{border-color:#ffd166;box-shadow:0 0 18px #ffd166}
+.money{font-size:24px;color:#80ed99;font-weight:900}
+.host{
+  text-align:center;font-size:20px;line-height:1.5;
+  background:linear-gradient(135deg,#ffd166,#ffafcc);color:#111;
+  border-radius:22px;padding:18px;font-weight:900
+}
+.question{
+  font-size:23px;text-align:center;background:#0007;padding:20px;border-radius:20px;
+}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.options button{
+  background:#14213d;color:white;border:2px solid #ffd166;min-height:70px;
+}
+.options button.correct{background:#2dc653}
+.options button.wrong{background:#ef233c}
+.lifelines{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.lifelines button{background:#90dbf4}
+.ladder{
+  max-height:260px;overflow:auto;background:#0005;border-radius:18px;padding:12px;
+}
+.step{
+  display:flex;justify-content:space-between;padding:7px 10px;border-radius:10px;margin:4px 0;
+}
+.step.now{background:#ffd166;color:#111;font-weight:900}
+.step.safe{background:#80ed99;color:#111}
+.big{text-align:center;font-size:30px;font-weight:900;color:#ffd166}
+.timer{
+  text-align:center;font-size:35px;font-weight:900;color:#ffafcc;
+}
 .badge{display:inline-block;background:#ffd166;color:#111;padding:7px 12px;border-radius:99px;margin:4px;font-weight:900}
-.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.cell{
-aspect-ratio:1/1;background:white;color:#111;border-radius:13px;
-display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px
+@media(max-width:700px){
+  .players,.options,.lifelines{grid-template-columns:1fr}
+  h1{font-size:26px}.question{font-size:19px}
 }
-.marked{background:#80ed99;text-decoration:line-through}
-.sudoku{
-display:grid;grid-template-columns:repeat(9,1fr);gap:2px;background:#111;padding:4px;border-radius:12px
-}
-.sudoku input{
-margin:0;border-radius:4px;text-align:center;font-size:20px;font-weight:900;
-aspect-ratio:1/1;padding:0;background:white;color:#111
-}
-.sudoku input.fixed{background:#ffd166;color:#111}
-.sudoku input.bad{background:#ff6b6b;color:white}
-.sudoku input.good{background:#80ed99;color:#111}
-.sudoku input:nth-child(3n){border-right:3px solid #111}
-.sudoku input:nth-child(n+19):nth-child(-n+27),
-.sudoku input:nth-child(n+46):nth-child(-n+54){border-bottom:3px solid #111}
-.big{text-align:center;font-size:26px;font-weight:900;color:#80ed99}
-@media(max-width:700px){.grid3{grid-template-columns:1fr}h1{font-size:27px}.cell{font-size:18px}}
 </style>
 </head>
 <body>
 <div class="app">
-<h1>🎮 3 Player Game Hub</h1>
+<h1>💰 3 Player Crorepati Fun Quiz</h1>
 
-<div id="home" class="card">
-<input id="nameInput" placeholder="Your name">
-<button class="green" onclick="createRoom()">Create Room</button>
-<input id="roomInput" placeholder="Enter Room Code">
-<button class="blue" onclick="joinRoom()">Join Room</button>
+<div id="setup" class="card">
+  <h2>Enter 3 Players</h2>
+  <input id="p1" placeholder="Player 1" value="Player 1">
+  <input id="p2" placeholder="Player 2" value="Player 2">
+  <input id="p3" placeholder="Player 3" value="Player 3">
+  <button onclick="startGame()">Start Game 🎬</button>
 </div>
 
-<div id="lobby" class="card hidden">
-<p>Room Code</p>
-<div class="room" id="roomText"></div>
-<h3>Players</h3>
-<div class="grid3" id="playersBox"></div>
-<h3>Choose Game</h3>
-<button class="green" onclick="startBingo()">🎯 Start Bingo Battle</button>
-<button class="pink" onclick="startSudoku()">🧠 Start Sudoku Race</button>
+<div id="game" class="hidden">
+  <div class="players" id="playersBox"></div>
+
+  <div class="card host" id="hostBox">
+    Namaskar! Welcome to the funniest Crorepati battle!
+  </div>
+
+  <div class="card">
+    <div class="timer" id="timerBox">30</div>
+    <div class="question" id="questionBox"></div>
+  </div>
+
+  <div class="card">
+    <div class="options" id="optionsBox"></div>
+  </div>
+
+  <div class="card">
+    <h3>Lifelines</h3>
+    <div class="lifelines">
+      <button onclick="useFifty()">50:50 ✂️</button>
+      <button onclick="useAudience()">Audience Poll 👥</button>
+      <button onclick="useSkip()">Skip Question ⏭️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Money Ladder</h3>
+    <div class="ladder" id="ladderBox"></div>
+  </div>
 </div>
 
-<div id="bingo" class="hidden">
-<div class="card">
-<h2>🎯 Bingo Battle</h2>
-<p id="turnText"></p>
-<button id="callBtn" onclick="callNumber()">Call Number 🎲</button>
-</div>
-<div class="card"><h3>Called Numbers</h3><div id="calledBox"></div></div>
-<div class="card"><h3>Your Board</h3><div class="board" id="bingoBoard"></div></div>
-<div class="card"><h3>Leaderboard</h3><div class="grid3" id="bingoScores"></div></div>
-</div>
-
-<div id="sudoku" class="hidden">
-<div class="card">
-<h2>🧠 Sudoku Race</h2>
-<p>Solve fast. Wrong entries reduce your score.</p>
-<div class="big" id="timerBox">00:00</div>
-</div>
-<div class="card"><div class="sudoku" id="sudokuGrid"></div></div>
-<div class="card"><h3>Leaderboard</h3><div class="grid3" id="sudokuScores"></div></div>
-</div>
-
-<div id="winnerBox" class="card hidden">
-<div class="big" id="winnerText"></div>
-<button class="green" onclick="location.reload()">Play Again</button>
+<div id="final" class="card hidden">
+  <div class="big" id="winnerText"></div>
+  <button onclick="location.reload()">Play Again 🔁</button>
 </div>
 </div>
 
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getDatabase,ref,set,update,onValue,get}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<script>
+let players=[];
+let currentPlayer=0;
+let qIndex=0;
+let timer=30;
+let timerInterval;
+let usedQuestions=[];
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBuNbEcsm_aiXIUXxsVq6vkMDBZNPexH88",
-  authDomain: "bingovicky-ebad1.firebaseapp.com",
-  databaseURL: "https://bingovicky-ebad1-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "bingovicky-ebad1",
-  storageBucket: "bingovicky-ebad1.firebasestorage.app",
-  messagingSenderId: "69770922572",
-  appId: "1:69770922572:web:23509243d16bae088942e9",
-  measurementId: "G-KTB33J64VQ"
-};
-
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
-
-let room="",pid="",pname="",data=null,timerInt=null,startTime=0;
-
-const puzzle=[
-5,3,0,0,7,0,0,0,0,
-6,0,0,1,9,5,0,0,0,
-0,9,8,0,0,0,0,6,0,
-8,0,0,0,6,0,0,0,3,
-4,0,0,8,0,3,0,0,1,
-7,0,0,0,2,0,0,0,6,
-0,6,0,0,0,0,2,8,0,
-0,0,0,4,1,9,0,0,5,
-0,0,0,0,8,0,0,7,9
+const money=[
+"₹1,000","₹2,000","₹5,000","₹10,000","₹20,000",
+"₹40,000","₹80,000","₹1,60,000","₹3,20,000","₹6,40,000",
+"₹12,50,000","₹25,00,000","₹50,00,000","₹1 Crore"
 ];
 
-const solution=[
-5,3,4,6,7,8,9,1,2,
-6,7,2,1,9,5,3,4,8,
-1,9,8,3,4,2,5,6,7,
-8,5,9,7,6,1,4,2,3,
-4,2,6,8,5,3,7,9,1,
-7,1,3,9,2,4,8,5,6,
-9,6,1,5,3,7,2,8,4,
-2,8,7,4,1,9,6,3,5,
-3,4,5,2,8,6,1,7,9
+const questions=[
+{q:"If your friend says 'I am coming in 5 minutes', what is the real meaning?",o:["5 minutes","15 minutes","1 hour","Tomorrow"],a:2},
+{q:"Which is the strongest password?",o:["123456","password","iloveyou","MummyWillBeatMe@999"],a:3},
+{q:"What happens when mom calls your full name?",o:["Love starts","Food is ready","Danger begins","WiFi improves"],a:2},
+{q:"What is the universal Indian remote fixing method?",o:["Recharge it","Hit it twice","Pray to it","Buy new TV"],a:1},
+{q:"When teacher says 'surprise test', students feel like?",o:["Happy","Confident","Betrayed","Hungry"],a:2},
+{q:"Best excuse for not replying?",o:["Battery died","Network issue","I slept","All of the above"],a:3},
+{q:"What is the fastest thing in India?",o:["Train","Cheetah","Rumour in family group","Internet"],a:2},
+{q:"What does 'Khaana kha liya?' usually mean?",o:["Food question","Care","Investigation","All of these"],a:3},
+{q:"If dad says 'we will leave at 6', when should you be ready?",o:["6","5:55","5:30","After he shouts"],a:2},
+{q:"Most dangerous phone notification?",o:["Low battery","Storage full","Mom: Call me","App update"],a:2},
+{q:"What is the official language of best friends?",o:["English","Hindi","Tamil","Roasting"],a:3},
+{q:"If someone says 'I am not angry', what does it mean?",o:["Not angry","Little angry","Very angry","Game over"],a:3},
+{q:"What is the main use of chair in Indian houses?",o:["Sitting","Clothes storage","Decoration","Both A and B"],a:3},
+{q:"What is the best time to start studying?",o:["Morning","Evening","Tomorrow","After one reel"],a:2},
+{q:"What do friends say before giving worst advice?",o:["Trust me","Bro listen","I have an idea","All of these"],a:3},
+{q:"Most common gym plan?",o:["Today","Monday","Next month","After buying shoes"],a:3},
+{q:"If WiFi stops, what is the first reaction?",o:["Stay calm","Restart router","Blame everyone","Study"],a:2},
+{q:"What is the biggest lie during exam time?",o:["I studied everything","I studied nothing","Paper easy","I will sleep early"],a:1},
+{q:"What do people do after saying 'last reel'?",o:["Stop","Sleep","Watch 50 more","Delete Instagram"],a:2},
+{q:"When biryani is served, what disappears first?",o:["Rice","Raitha","Peace","Chicken piece"],a:3},
+{q:"What is the national sound of pressure cooker?",o:["Boom","Whistle","Music","Alarm"],a:1},
+{q:"Most used word in group project?",o:["Done","Tomorrow","Bro you do","Almost finished"],a:1},
+{q:"What is the first rule of siblings?",o:["Share everything","Fight first","Be silent","Never complain"],a:1},
+{q:"What is the best reply to 'Where are you?'",o:["Coming","Almost there","Near only","Still at home"],a:2},
+{q:"Which app destroys productivity most?",o:["Calculator","Notes","Instagram","Calendar"],a:2},
+{q:"If mom says 'nothing', what should you do?",o:["Relax","Ask again","Run","Order food"],a:2},
+{q:"Most powerful Indian sentence?",o:["Beta study","Wait till dad comes","Eat properly","Where is remote?"],a:1},
+{q:"What is the official food of late night hunger?",o:["Salad","Soup","Maggi","Apple"],a:2},
+{q:"What do friends do when you fall?",o:["Help first","Laugh first","Call ambulance","Ignore"],a:1},
+{q:"What is the real meaning of 'seen' with no reply?",o:["Busy","Thinking","Ignored","Phone broken"],a:2}
 ];
 
-function board(){
-let a=[];for(let i=1;i<=25;i++)a.push(i);
-return a.sort(()=>Math.random()-.5);
-}
-
-window.createRoom=async()=>{
-pname=nameInput.value.trim();
-if(!pname)return alert("Enter name macha");
-room=Math.random().toString(36).substring(2,8).toUpperCase();
-pid="p"+Date.now();
-await set(ref(db,"gameHub/"+room),{
-host:pid,status:"lobby",game:"",turn:0,called:[],winner:"",
-startTime:0,
-players:{[pid]:{name:pname,bingo:board(),sudoku:[...puzzle],mistakes:0,finished:false,time:0}}
-});
-enter();
-};
-
-window.joinRoom=async()=>{
-pname=nameInput.value.trim();
-room=roomInput.value.trim().toUpperCase();
-if(!pname||!room)return alert("Enter name and room code");
-let snap=await get(ref(db,"gameHub/"+room));
-if(!snap.exists())return alert("Room not found");
-let d=snap.val();
-if(Object.keys(d.players||{}).length>=3)return alert("Room full");
-pid="p"+Date.now();
-await update(ref(db,"gameHub/"+room+"/players/"+pid),{
-name:pname,bingo:board(),sudoku:[...puzzle],mistakes:0,finished:false,time:0
-});
-enter();
-};
-
-function enter(){
-home.classList.add("hidden");
-lobby.classList.remove("hidden");
-roomText.innerText=room;
-onValue(ref(db,"gameHub/"+room),snap=>{
-data=snap.val();if(!data)return;
-renderPlayers();
-if(data.game==="bingo")showBingo();
-if(data.game==="sudoku")showSudoku();
-if(data.winner)showWinner(data.winner);
-});
+function startGame(){
+  players=[
+    {name:p1.value||"Player 1",money:0,level:0,wrong:0,fifty:false,audience:false,skip:false},
+    {name:p2.value||"Player 2",money:0,level:0,wrong:0,fifty:false,audience:false,skip:false},
+    {name:p3.value||"Player 3",money:0,level:0,wrong:0,fifty:false,audience:false,skip:false}
+  ];
+  setup.classList.add("hidden");
+  game.classList.remove("hidden");
+  renderPlayers();
+  loadQuestion();
 }
 
 function renderPlayers(){
-playersBox.innerHTML=Object.values(data.players||{}).map(p=>`
-<div class="player">👤<br><b>${p.name}</b></div>`).join("");
+  playersBox.innerHTML=players.map((p,i)=>`
+    <div class="player ${i===currentPlayer?'active':''}">
+      🧑‍🚀<br><b>${p.name}</b><br>
+      <div class="money">${p.money}</div>
+      Level: ${p.level}/14<br>
+      Wrong: ${p.wrong}/2
+    </div>
+  `).join("");
 }
 
-window.startBingo=async()=>{
-if(data.host!==pid)return alert("Only host can start");
-if(Object.keys(data.players).length!==3)return alert("Need 3 players");
-await update(ref(db,"gameHub/"+room),{game:"bingo",status:"playing",turn:0,called:[],winner:""});
-};
-
-window.startSudoku=async()=>{
-if(data.host!==pid)return alert("Only host can start");
-if(Object.keys(data.players).length!==3)return alert("Need 3 players");
-await update(ref(db,"gameHub/"+room),{game:"sudoku",status:"playing",winner:"",startTime:Date.now()});
-};
-
-function hideAll(){
-lobby.classList.add("hidden");bingo.classList.add("hidden");sudoku.classList.add("hidden");
+function renderLadder(){
+  ladderBox.innerHTML=money.map((m,i)=>`
+    <div class="step ${i===players[currentPlayer].level?'now':''} ${(i===4||i===9)?'safe':''}">
+      <span>Q${i+1}</span><b>${m}</b>
+    </div>
+  `).reverse().join("");
 }
 
-function showBingo(){
-hideAll();bingo.classList.remove("hidden");
-let ids=Object.keys(data.players);
-let current=ids[data.turn%ids.length];
-turnText.innerHTML="Turn: <b>"+data.players[current].name+"</b>";
-callBtn.disabled=current!==pid||data.winner;
-renderBingoBoard();renderCalled();renderBingoScores();
+function randomQuestion(){
+  if(usedQuestions.length>=questions.length) usedQuestions=[];
+  let index;
+  do{ index=Math.floor(Math.random()*questions.length); }
+  while(usedQuestions.includes(index));
+  usedQuestions.push(index);
+  return questions[index];
 }
 
-window.callNumber=async()=>{
-let called=data.called||[];
-let available=[];
-for(let i=1;i<=25;i++)if(!called.includes(i))available.push(i);
-let num=available[Math.floor(Math.random()*available.length)];
-called.push(num);
-let ids=Object.keys(data.players);
-await update(ref(db,"gameHub/"+room),{called,turn:(data.turn+1)%ids.length});
-};
+let currentQ;
 
-function renderBingoBoard(){
-let me=data.players[pid];
-let called=data.called||[];
-bingoBoard.innerHTML=me.bingo.map(n=>`
-<div class="cell ${called.includes(n)?"marked":""}">${n}</div>`).join("");
-let lines=countLines(me.bingo,called);
-if(lines>=5&&!data.winner)update(ref(db,"gameHub/"+room),{winner:me.name+" won Bingo 🎯"});
-}
-
-function renderCalled(){
-calledBox.innerHTML=(data.called||[]).map(n=>`<span class="badge">${n}</span>`).join("");
-}
-
-function countLines(b,called){
-let g=[];for(let i=0;i<5;i++)g.push(b.slice(i*5,i*5+5));
-let l=0;
-for(let r=0;r<5;r++)if(g[r].every(n=>called.includes(n)))l++;
-for(let c=0;c<5;c++)if([0,1,2,3,4].every(r=>called.includes(g[r][c])))l++;
-if([0,1,2,3,4].every(i=>called.includes(g[i][i])))l++;
-if([0,1,2,3,4].every(i=>called.includes(g[i][4-i])))l++;
-return l;
-}
-
-function renderBingoScores(){
-bingoScores.innerHTML=Object.values(data.players).map(p=>{
-let l=countLines(p.bingo,data.called||[]);
-return `<div class="player"><b>${p.name}</b><br>${l}/5 lines</div>`;
-}).join("");
-}
-
-function showSudoku(){
-hideAll();sudoku.classList.remove("hidden");
-renderSudoku();
-renderSudokuScores();
-startTimer();
-}
-
-function renderSudoku(){
-let me=data.players[pid];
-sudokuGrid.innerHTML=me.sudoku.map((v,i)=>{
-let fixed=puzzle[i]!==0;
-return `<input maxlength="1" value="${v||""}" ${fixed?"disabled":""}
-class="${fixed?"fixed":""}" oninput="sudokuInput(${i},this.value,this)">`;
-}).join("");
-}
-
-window.sudokuInput=async(i,val,el)=>{
-val=parseInt(val)||0;
-let me=data.players[pid];
-let arr=[...me.sudoku];
-arr[i]=val;
-let mistakes=me.mistakes||0;
-if(val&&val!==solution[i]){mistakes++;el.className="bad"}
-else if(val===solution[i])el.className="good";
-await update(ref(db,"gameHub/"+room+"/players/"+pid),{sudoku:arr,mistakes});
-checkSudokuWin(arr,mistakes);
-};
-
-function checkSudokuWin(arr,mistakes){
-let done=arr.every((v,i)=>v===solution[i]);
-if(done&&!data.winner){
-let seconds=Math.floor((Date.now()-data.startTime)/1000);
-update(ref(db,"gameHub/"+room+"/players/"+pid),{finished:true,time:seconds});
-update(ref(db,"gameHub/"+room),{winner:pname+" won Sudoku 🧠 in "+seconds+" sec"});
-}
-}
-
-function renderSudokuScores(){
-sudokuScores.innerHTML=Object.values(data.players).map(p=>{
-let filled=p.sudoku.filter(x=>x!==0).length;
-return `<div class="player">
-<b>${p.name}</b><br>
-Filled: ${filled}/81<br>
-Mistakes: ${p.mistakes||0}<br>
-${p.finished?"✅ Finished":"⏳ Playing"}
-</div>`;
-}).join("");
+function loadQuestion(){
+  clearInterval(timerInterval);
+  timer=30;
+  currentQ=randomQuestion();
+  hostBox.innerHTML=`Computer ji, lock kar diya jaye!<br><span class="badge">${players[currentPlayer].name}'s turn</span>`;
+  questionBox.innerText=currentQ.q;
+  optionsBox.innerHTML=currentQ.o.map((op,i)=>`
+    <button onclick="answer(${i},this)"> ${String.fromCharCode(65+i)}. ${op}</button>
+  `).join("");
+  renderPlayers();
+  renderLadder();
+  startTimer();
 }
 
 function startTimer(){
-clearInterval(timerInt);
-timerInt=setInterval(()=>{
-if(!data||!data.startTime)return;
-let s=Math.floor((Date.now()-data.startTime)/1000);
-let m=String(Math.floor(s/60)).padStart(2,"0");
-let sec=String(s%60).padStart(2,"0");
-timerBox.innerText=m+":"+sec;
-},1000);
+  timerBox.innerText=timer;
+  timerInterval=setInterval(()=>{
+    timer--;
+    timerBox.innerText=timer;
+    if(timer<=0){
+      clearInterval(timerInterval);
+      hostBox.innerHTML="Time up! Audience is shocked 😭";
+      wrongAnswer();
+    }
+  },1000);
 }
 
-function showWinner(w){
-winnerBox.classList.remove("hidden");
-winnerText.innerHTML="🏆 "+w;
-if(callBtn)callBtn.disabled=true;
+function answer(i,btn){
+  clearInterval(timerInterval);
+  let buttons=[...optionsBox.querySelectorAll("button")];
+  buttons.forEach(b=>b.disabled=true);
+
+  if(i===currentQ.a){
+    btn.classList.add("correct");
+    correctAnswer();
+  }else{
+    btn.classList.add("wrong");
+    buttons[currentQ.a].classList.add("correct");
+    wrongAnswer();
+  }
+}
+
+function correctAnswer(){
+  let p=players[currentPlayer];
+  p.level++;
+  p.money=money[p.level-1]||p.money;
+  hostBox.innerHTML=`Sahi jawab! ${p.name}, aap jeet gaye ${p.money} 🎉`;
+
+  if(p.level>=14){
+    endGame();
+    return;
+  }
+
+  setTimeout(()=>{
+    nextPlayer();
+  },1700);
+}
+
+function wrongAnswer(){
+  let p=players[currentPlayer];
+  p.wrong++;
+  hostBox.innerHTML=`Galat jawab! ${p.name}, thoda sambhal ke 😭`;
+
+  if(p.wrong>=2){
+    hostBox.innerHTML=`${p.name} is eliminated!`;
+  }
+
+  setTimeout(()=>{
+    nextPlayer();
+  },1800);
+}
+
+function nextPlayer(){
+  let alive=players.filter(p=>p.wrong<2 && p.level<14);
+  if(alive.length<=1){
+    endGame();
+    return;
+  }
+
+  do{
+    currentPlayer=(currentPlayer+1)%3;
+  }while(players[currentPlayer].wrong>=2 || players[currentPlayer].level>=14);
+
+  loadQuestion();
+}
+
+function useFifty(){
+  let p=players[currentPlayer];
+  if(p.fifty)return alert("50:50 already used");
+  p.fifty=true;
+
+  let buttons=[...optionsBox.querySelectorAll("button")];
+  let wrongs=[0,1,2,3].filter(i=>i!==currentQ.a);
+  wrongs.sort(()=>Math.random()-.5).slice(0,2).forEach(i=>{
+    buttons[i].style.visibility="hidden";
+  });
+  hostBox.innerHTML="50:50 used! Two wrong options removed ✂️";
+}
+
+function useAudience(){
+  let p=players[currentPlayer];
+  if(p.audience)return alert("Audience Poll already used");
+  p.audience=true;
+
+  let poll=[0,0,0,0];
+  poll[currentQ.a]=Math.floor(Math.random()*25)+55;
+  let remaining=100-poll[currentQ.a];
+  for(let i=0;i<4;i++){
+    if(i!==currentQ.a){
+      let val=Math.floor(Math.random()*remaining);
+      poll[i]=val;
+      remaining-=val;
+    }
+  }
+  poll[poll.length-1]+=remaining;
+
+  hostBox.innerHTML=`
+    Audience Poll 👥<br>
+    A: ${poll[0]}% | B: ${poll[1]}% | C: ${poll[2]}% | D: ${poll[3]}%
+  `;
+}
+
+function useSkip(){
+  let p=players[currentPlayer];
+  if(p.skip)return alert("Skip already used");
+  p.skip=true;
+  hostBox.innerHTML="Question skipped! Smart move 😎";
+  setTimeout(loadQuestion,1000);
+}
+
+function endGame(){
+  clearInterval(timerInterval);
+  game.classList.add("hidden");
+  final.classList.remove("hidden");
+
+  let sorted=[...players].sort((a,b)=>{
+    let av=money.indexOf(a.money), bv=money.indexOf(b.money);
+    return bv-av;
+  });
+
+  winnerText.innerHTML=`
+    🏆 Winner: ${sorted[0].name}<br>
+    Prize: ${sorted[0].money}<br><br>
+    🥇 ${sorted[0].name}: ${sorted[0].money}<br>
+    🥈 ${sorted[1].name}: ${sorted[1].money}<br>
+    🥉 ${sorted[2].name}: ${sorted[2].money}
+  `;
 }
 </script>
 </body>
