@@ -1,353 +1,346 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3 Player Crorepati Fun Quiz</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>3 Player Crorepati Room Game</title>
 <style>
-*{box-sizing:border-box;font-family:Poppins,Arial,sans-serif}
+*{box-sizing:border-box;font-family:Poppins,Arial}
 body{
-  margin:0;min-height:100vh;color:white;padding:15px;
-  background:radial-gradient(circle at top,#243bff 0,#090979 35%,#020024 85%);
+margin:0;min-height:100vh;color:white;padding:15px;
+background:radial-gradient(circle at top,#283593,#090047 55%,#020014);
 }
 .app{max-width:950px;margin:auto}
-h1{text-align:center;font-size:34px;margin:10px 0}
+h1{text-align:center}
 .card{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
-  border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 20px 50px #0007;
+background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);
+border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 18px 45px #0007
 }
 input,button{
-  width:100%;padding:14px;border:0;border-radius:15px;margin:7px 0;font-size:16px;
+width:100%;padding:14px;margin:7px 0;border:0;border-radius:15px;font-size:16px
 }
-button{cursor:pointer;font-weight:900;background:#ffd166;color:#111}
-button:hover{transform:scale(1.02)}
+button{font-weight:900;background:#ffd166;color:#111;cursor:pointer}
+button:disabled{opacity:.45}
+.green{background:#80ed99}.blue{background:#90dbf4}.red{background:#ff6b6b;color:white}
 .hidden{display:none}
+.room{text-align:center;font-size:32px;color:#ffd166;font-weight:900;letter-spacing:3px}
 .players{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.player{
-  background:#0005;border-radius:18px;padding:12px;text-align:center;border:2px solid transparent;
-}
+.player{text-align:center;background:#0006;border-radius:18px;padding:12px;border:2px solid transparent}
 .active{border-color:#ffd166;box-shadow:0 0 18px #ffd166}
-.money{font-size:24px;color:#80ed99;font-weight:900}
+.money{font-size:22px;color:#80ed99;font-weight:900}
 .host{
-  text-align:center;font-size:20px;line-height:1.5;
-  background:linear-gradient(135deg,#ffd166,#ffafcc);color:#111;
-  border-radius:22px;padding:18px;font-weight:900
+text-align:center;font-size:20px;line-height:1.5;
+background:linear-gradient(135deg,#ffd166,#ffafcc);color:#111;
+border-radius:22px;padding:18px;font-weight:900
 }
-.question{
-  font-size:23px;text-align:center;background:#0007;padding:20px;border-radius:20px;
-}
+.question{text-align:center;font-size:23px;background:#0007;padding:20px;border-radius:20px}
 .options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.options button{
-  background:#14213d;color:white;border:2px solid #ffd166;min-height:70px;
-}
-.options button.correct{background:#2dc653}
-.options button.wrong{background:#ef233c}
+.options button{background:#14213d;color:white;border:2px solid #ffd166;min-height:70px}
+.correct{background:#2dc653!important}.wrong{background:#ef233c!important}
 .lifelines{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .lifelines button{background:#90dbf4}
-.ladder{
-  max-height:260px;overflow:auto;background:#0005;border-radius:18px;padding:12px;
-}
-.step{
-  display:flex;justify-content:space-between;padding:7px 10px;border-radius:10px;margin:4px 0;
-}
-.step.now{background:#ffd166;color:#111;font-weight:900}
-.step.safe{background:#80ed99;color:#111}
 .big{text-align:center;font-size:30px;font-weight:900;color:#ffd166}
-.timer{
-  text-align:center;font-size:35px;font-weight:900;color:#ffafcc;
-}
 .badge{display:inline-block;background:#ffd166;color:#111;padding:7px 12px;border-radius:99px;margin:4px;font-weight:900}
-@media(max-width:700px){
-  .players,.options,.lifelines{grid-template-columns:1fr}
-  h1{font-size:26px}.question{font-size:19px}
-}
+.timer{text-align:center;font-size:35px;font-weight:900;color:#ffafcc}
+@media(max-width:700px){.players,.options,.lifelines{grid-template-columns:1fr}.question{font-size:19px}}
 </style>
 </head>
 <body>
 <div class="app">
 <h1>💰 3 Player Crorepati Fun Quiz</h1>
 
-<div id="setup" class="card">
-  <h2>Enter 3 Players</h2>
-  <input id="p1" placeholder="Player 1" value="Player 1">
-  <input id="p2" placeholder="Player 2" value="Player 2">
-  <input id="p3" placeholder="Player 3" value="Player 3">
-  <button onclick="startGame()">Start Game 🎬</button>
+<div id="home" class="card">
+<input id="nameInput" placeholder="Enter your name">
+<button class="green" onclick="createRoom()">Create Room</button>
+<input id="roomInput" placeholder="Enter Room Code">
+<button class="blue" onclick="joinRoom()">Join Room</button>
+</div>
+
+<div id="lobby" class="card hidden">
+<p>Room Code:</p>
+<div class="room" id="roomText"></div>
+<h3>Players</h3>
+<div class="players" id="lobbyPlayers"></div>
+<button id="startBtn" class="green" onclick="startGame()">Start Game</button>
 </div>
 
 <div id="game" class="hidden">
-  <div class="players" id="playersBox"></div>
-
-  <div class="card host" id="hostBox">
-    Namaskar! Welcome to the funniest Crorepati battle!
-  </div>
-
-  <div class="card">
-    <div class="timer" id="timerBox">30</div>
-    <div class="question" id="questionBox"></div>
-  </div>
-
-  <div class="card">
-    <div class="options" id="optionsBox"></div>
-  </div>
-
-  <div class="card">
-    <h3>Lifelines</h3>
-    <div class="lifelines">
-      <button onclick="useFifty()">50:50 ✂️</button>
-      <button onclick="useAudience()">Audience Poll 👥</button>
-      <button onclick="useSkip()">Skip Question ⏭️</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Money Ladder</h3>
-    <div class="ladder" id="ladderBox"></div>
-  </div>
+<div class="players" id="playersBox"></div>
+<div class="card host" id="hostBox"></div>
+<div class="card">
+<div class="timer" id="timerBox">30</div>
+<div class="question" id="questionBox"></div>
+</div>
+<div class="card">
+<div class="options" id="optionsBox"></div>
+</div>
+<div class="card">
+<h3>Lifelines</h3>
+<div class="lifelines">
+<button onclick="useFifty()">50:50 ✂️</button>
+<button onclick="useAudience()">Audience Poll 👥</button>
+<button onclick="useSkip()">Skip ⏭️</button>
+</div>
+</div>
 </div>
 
 <div id="final" class="card hidden">
-  <div class="big" id="winnerText"></div>
-  <button onclick="location.reload()">Play Again 🔁</button>
+<div class="big" id="winnerText"></div>
+<button class="green" onclick="location.reload()">Play Again</button>
 </div>
 </div>
 
-<script>
-let players=[];
-let currentPlayer=0;
-let qIndex=0;
-let timer=30;
-let timerInterval;
-let usedQuestions=[];
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getDatabase,ref,set,update,onValue,get}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-const money=[
-"₹1,000","₹2,000","₹5,000","₹10,000","₹20,000",
-"₹40,000","₹80,000","₹1,60,000","₹3,20,000","₹6,40,000",
-"₹12,50,000","₹25,00,000","₹50,00,000","₹1 Crore"
-];
+const firebaseConfig={
+apiKey:"AIzaSyBuNbEcsm_aiXIUXxsVq6vkMDBZNPexH88",
+authDomain:"bingovicky-ebad1.firebaseapp.com",
+databaseURL:"https://bingovicky-ebad1-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"bingovicky-ebad1",
+storageBucket:"bingovicky-ebad1.firebasestorage.app",
+messagingSenderId:"69770922572",
+appId:"1:69770922572:web:23509243d16bae088942e9",
+measurementId:"G-KTB33J64VQ"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+let room="",pid="",pname="",data=null,timerInt=null;
+
+const money=["₹1,000","₹2,000","₹5,000","₹10,000","₹20,000","₹40,000","₹80,000","₹1,60,000","₹3,20,000","₹6,40,000","₹12,50,000","₹25,00,000","₹50,00,000","₹1 Crore"];
 
 const questions=[
-{q:"If your friend says 'I am coming in 5 minutes', what is the real meaning?",o:["5 minutes","15 minutes","1 hour","Tomorrow"],a:2},
-{q:"Which is the strongest password?",o:["123456","password","iloveyou","MummyWillBeatMe@999"],a:3},
-{q:"What happens when mom calls your full name?",o:["Love starts","Food is ready","Danger begins","WiFi improves"],a:2},
-{q:"What is the universal Indian remote fixing method?",o:["Recharge it","Hit it twice","Pray to it","Buy new TV"],a:1},
-{q:"When teacher says 'surprise test', students feel like?",o:["Happy","Confident","Betrayed","Hungry"],a:2},
-{q:"Best excuse for not replying?",o:["Battery died","Network issue","I slept","All of the above"],a:3},
-{q:"What is the fastest thing in India?",o:["Train","Cheetah","Rumour in family group","Internet"],a:2},
-{q:"What does 'Khaana kha liya?' usually mean?",o:["Food question","Care","Investigation","All of these"],a:3},
-{q:"If dad says 'we will leave at 6', when should you be ready?",o:["6","5:55","5:30","After he shouts"],a:2},
-{q:"Most dangerous phone notification?",o:["Low battery","Storage full","Mom: Call me","App update"],a:2},
-{q:"What is the official language of best friends?",o:["English","Hindi","Tamil","Roasting"],a:3},
-{q:"If someone says 'I am not angry', what does it mean?",o:["Not angry","Little angry","Very angry","Game over"],a:3},
-{q:"What is the main use of chair in Indian houses?",o:["Sitting","Clothes storage","Decoration","Both A and B"],a:3},
-{q:"What is the best time to start studying?",o:["Morning","Evening","Tomorrow","After one reel"],a:2},
-{q:"What do friends say before giving worst advice?",o:["Trust me","Bro listen","I have an idea","All of these"],a:3},
-{q:"Most common gym plan?",o:["Today","Monday","Next month","After buying shoes"],a:3},
-{q:"If WiFi stops, what is the first reaction?",o:["Stay calm","Restart router","Blame everyone","Study"],a:2},
-{q:"What is the biggest lie during exam time?",o:["I studied everything","I studied nothing","Paper easy","I will sleep early"],a:1},
-{q:"What do people do after saying 'last reel'?",o:["Stop","Sleep","Watch 50 more","Delete Instagram"],a:2},
-{q:"When biryani is served, what disappears first?",o:["Rice","Raitha","Peace","Chicken piece"],a:3},
-{q:"What is the national sound of pressure cooker?",o:["Boom","Whistle","Music","Alarm"],a:1},
-{q:"Most used word in group project?",o:["Done","Tomorrow","Bro you do","Almost finished"],a:1},
-{q:"What is the first rule of siblings?",o:["Share everything","Fight first","Be silent","Never complain"],a:1},
-{q:"What is the best reply to 'Where are you?'",o:["Coming","Almost there","Near only","Still at home"],a:2},
-{q:"Which app destroys productivity most?",o:["Calculator","Notes","Instagram","Calendar"],a:2},
-{q:"If mom says 'nothing', what should you do?",o:["Relax","Ask again","Run","Order food"],a:2},
-{q:"Most powerful Indian sentence?",o:["Beta study","Wait till dad comes","Eat properly","Where is remote?"],a:1},
-{q:"What is the official food of late night hunger?",o:["Salad","Soup","Maggi","Apple"],a:2},
-{q:"What do friends do when you fall?",o:["Help first","Laugh first","Call ambulance","Ignore"],a:1},
-{q:"What is the real meaning of 'seen' with no reply?",o:["Busy","Thinking","Ignored","Phone broken"],a:2}
+{q:"If your friend says '5 minutes', what is the real meaning?",o:["5 minutes","15 minutes","1 hour","Tomorrow"],a:2},
+{q:"What happens when mom calls your full name?",o:["Love","Food ready","Danger","WiFi speed"],a:2},
+{q:"Universal remote fixing method?",o:["Recharge","Hit twice","Pray","Buy TV"],a:1},
+{q:"Fastest thing in India?",o:["Train","Cheetah","Family rumour","Internet"],a:2},
+{q:"Best excuse for not replying?",o:["Battery died","Network issue","I slept","All"],a:3},
+{q:"Most dangerous notification?",o:["Low battery","Mom: Call me","Update","Storage full"],a:1},
+{q:"Official language of best friends?",o:["English","Hindi","Tamil","Roasting"],a:3},
+{q:"Meaning of 'I am not angry'?",o:["Not angry","Little angry","Very angry","Game over"],a:3},
+{q:"Main use of chair at home?",o:["Sitting","Clothes storage","Decoration","All"],a:3},
+{q:"Best time to start studying?",o:["Morning","Evening","Tomorrow","After one reel"],a:2},
+{q:"Worst advice starts with?",o:["Trust me","Bro listen","I have idea","All"],a:3},
+{q:"If WiFi stops first reaction?",o:["Calm","Restart","Blame everyone","Study"],a:2},
+{q:"Biggest exam-time lie?",o:["I studied all","I studied nothing","Paper easy","I sleep early"],a:1},
+{q:"After saying last reel?",o:["Stop","Sleep","Watch 50 more","Delete app"],a:2},
+{q:"Late night hunger official food?",o:["Salad","Soup","Maggi","Apple"],a:2},
+{q:"When friend falls?",o:["Help first","Laugh first","Ambulance","Ignore"],a:1},
+{q:"Most powerful sentence?",o:["Beta study","Wait till dad comes","Eat properly","Remote where"],a:1},
+{q:"Best reply to 'Where are you?'",o:["Coming","Almost there","Near only","Still home"],a:2}
 ];
 
-function startGame(){
-  players=[
-    {name:p1.value||"Player 1",money:0,level:0,wrong:0,fifty:false,audience:false,skip:false},
-    {name:p2.value||"Player 2",money:0,level:0,wrong:0,fifty:false,audience:false,skip:false},
-    {name:p3.value||"Player 3",money:0,level:0,wrong:0,fifty:false,audience:false,skip:false}
-  ];
-  setup.classList.add("hidden");
-  game.classList.remove("hidden");
-  renderPlayers();
-  loadQuestion();
+window.createRoom=async()=>{
+pname=nameInput.value.trim();
+if(!pname)return alert("Enter name");
+room=Math.random().toString(36).substring(2,8).toUpperCase();
+pid="p"+Date.now();
+await set(ref(db,"crorepatiRooms/"+room),{
+host:pid,status:"lobby",turn:0,qIndex:0,winner:"",
+currentQuestion:Math.floor(Math.random()*questions.length),
+answered:false,showCorrect:false,selected:-1,
+players:{[pid]:{name:pname,level:0,money:"₹0",wrong:0,fifty:false,audience:false,skip:false}}
+});
+enterRoom();
+};
+
+window.joinRoom=async()=>{
+pname=nameInput.value.trim();
+room=roomInput.value.trim().toUpperCase();
+if(!pname||!room)return alert("Enter name and room code");
+let snap=await get(ref(db,"crorepatiRooms/"+room));
+if(!snap.exists())return alert("Room not found");
+let d=snap.val();
+if(Object.keys(d.players||{}).length>=3)return alert("Room full");
+pid="p"+Date.now();
+await update(ref(db,"crorepatiRooms/"+room+"/players/"+pid),{
+name:pname,level:0,money:"₹0",wrong:0,fifty:false,audience:false,skip:false
+});
+enterRoom();
+};
+
+function enterRoom(){
+home.classList.add("hidden");
+lobby.classList.remove("hidden");
+roomText.innerText=room;
+
+onValue(ref(db,"crorepatiRooms/"+room),snap=>{
+data=snap.val();
+if(!data)return;
+renderLobby();
+if(data.status==="playing")renderGame();
+if(data.winner)showWinner();
+});
 }
 
-function renderPlayers(){
-  playersBox.innerHTML=players.map((p,i)=>`
-    <div class="player ${i===currentPlayer?'active':''}">
-      🧑‍🚀<br><b>${p.name}</b><br>
-      <div class="money">${p.money}</div>
-      Level: ${p.level}/14<br>
-      Wrong: ${p.wrong}/2
-    </div>
-  `).join("");
+function ids(){return Object.keys(data.players||{});}
+
+function renderLobby(){
+lobbyPlayers.innerHTML=Object.values(data.players||{}).map(p=>`
+<div class="player">👤<br><b>${p.name}</b><br>${p.money}</div>
+`).join("");
+startBtn.style.display=data.host===pid?"block":"none";
 }
 
-function renderLadder(){
-  ladderBox.innerHTML=money.map((m,i)=>`
-    <div class="step ${i===players[currentPlayer].level?'now':''} ${(i===4||i===9)?'safe':''}">
-      <span>Q${i+1}</span><b>${m}</b>
-    </div>
-  `).reverse().join("");
+window.startGame=async()=>{
+if(data.host!==pid)return alert("Only host can start");
+if(ids().length!==3)return alert("Need exactly 3 players");
+await update(ref(db,"crorepatiRooms/"+room),{
+status:"playing",
+turn:0,
+currentQuestion:Math.floor(Math.random()*questions.length),
+answered:false,
+selected:-1
+});
+};
+
+function renderGame(){
+lobby.classList.add("hidden");
+game.classList.remove("hidden");
+
+let idList=ids();
+let currentId=idList[data.turn%idList.length];
+let currentPlayer=data.players[currentId];
+let q=questions[data.currentQuestion];
+
+playersBox.innerHTML=idList.map(id=>{
+let p=data.players[id];
+return `<div class="player ${id===currentId?'active':''}">
+👤<br><b>${p.name}</b>
+<div class="money">${p.money}</div>
+Level: ${p.level}/14<br>Wrong: ${p.wrong}/2
+</div>`;
+}).join("");
+
+hostBox.innerHTML=`Computer ji, question on screen! <br><span class="badge">${currentPlayer.name}'s turn</span>`;
+questionBox.innerText=q.q;
+
+optionsBox.innerHTML=q.o.map((op,i)=>{
+let cls="";
+if(data.showCorrect&&i===q.a)cls="correct";
+if(data.showCorrect&&i===data.selected&&i!==q.a)cls="wrong";
+return `<button class="${cls}" onclick="answer(${i})" ${currentId!==pid||data.answered?'disabled':''}>${String.fromCharCode(65+i)}. ${op}</button>`;
+}).join("");
+
+startTimer(currentId===pid && !data.answered);
 }
 
-function randomQuestion(){
-  if(usedQuestions.length>=questions.length) usedQuestions=[];
-  let index;
-  do{ index=Math.floor(Math.random()*questions.length); }
-  while(usedQuestions.includes(index));
-  usedQuestions.push(index);
-  return questions[index];
+function startTimer(active){
+clearInterval(timerInt);
+let left=30;
+timerBox.innerText=left;
+if(!active)return;
+timerInt=setInterval(async()=>{
+left--;
+timerBox.innerText=left;
+if(left<=0){
+clearInterval(timerInt);
+await wrong(-1);
+}
+},1000);
 }
 
-let currentQ;
+window.answer=async(i)=>{
+let q=questions[data.currentQuestion];
+if(i===q.a)await correct(i);
+else await wrong(i);
+};
 
-function loadQuestion(){
-  clearInterval(timerInterval);
-  timer=30;
-  currentQ=randomQuestion();
-  hostBox.innerHTML=`Computer ji, lock kar diya jaye!<br><span class="badge">${players[currentPlayer].name}'s turn</span>`;
-  questionBox.innerText=currentQ.q;
-  optionsBox.innerHTML=currentQ.o.map((op,i)=>`
-    <button onclick="answer(${i},this)"> ${String.fromCharCode(65+i)}. ${op}</button>
-  `).join("");
-  renderPlayers();
-  renderLadder();
-  startTimer();
+async function correct(i){
+let idList=ids();
+let currentId=idList[data.turn%idList.length];
+let p=data.players[currentId];
+let level=p.level+1;
+let prize=money[level-1]||p.money;
+
+await update(ref(db,"crorepatiRooms/"+room),{
+answered:true,showCorrect:true,selected:i
+});
+await update(ref(db,"crorepatiRooms/"+room+"/players/"+currentId),{
+level:level,money:prize
+});
+
+setTimeout(()=>nextTurn(),1600);
 }
 
-function startTimer(){
-  timerBox.innerText=timer;
-  timerInterval=setInterval(()=>{
-    timer--;
-    timerBox.innerText=timer;
-    if(timer<=0){
-      clearInterval(timerInterval);
-      hostBox.innerHTML="Time up! Audience is shocked 😭";
-      wrongAnswer();
-    }
-  },1000);
+async function wrong(i){
+let idList=ids();
+let currentId=idList[data.turn%idList.length];
+let p=data.players[currentId];
+
+await update(ref(db,"crorepatiRooms/"+room),{
+answered:true,showCorrect:true,selected:i
+});
+await update(ref(db,"crorepatiRooms/"+room+"/players/"+currentId),{
+wrong:(p.wrong||0)+1
+});
+
+setTimeout(()=>nextTurn(),1600);
 }
 
-function answer(i,btn){
-  clearInterval(timerInterval);
-  let buttons=[...optionsBox.querySelectorAll("button")];
-  buttons.forEach(b=>b.disabled=true);
+async function nextTurn(){
+let snap=await get(ref(db,"crorepatiRooms/"+room));
+let d=snap.val();
+let idList=Object.keys(d.players);
+let alive=idList.filter(id=>d.players[id].wrong<2 && d.players[id].level<14);
 
-  if(i===currentQ.a){
-    btn.classList.add("correct");
-    correctAnswer();
-  }else{
-    btn.classList.add("wrong");
-    buttons[currentQ.a].classList.add("correct");
-    wrongAnswer();
-  }
+if(alive.length<=1){
+let sorted=idList.map(id=>d.players[id]).sort((a,b)=>money.indexOf(b.money)-money.indexOf(a.money));
+await update(ref(db,"crorepatiRooms/"+room),{winner:sorted[0].name});
+return;
 }
 
-function correctAnswer(){
-  let p=players[currentPlayer];
-  p.level++;
-  p.money=money[p.level-1]||p.money;
-  hostBox.innerHTML=`Sahi jawab! ${p.name}, aap jeet gaye ${p.money} 🎉`;
+let next=d.turn;
+do{next=(next+1)%idList.length;}
+while(d.players[idList[next]].wrong>=2);
 
-  if(p.level>=14){
-    endGame();
-    return;
-  }
-
-  setTimeout(()=>{
-    nextPlayer();
-  },1700);
+await update(ref(db,"crorepatiRooms/"+room),{
+turn:next,
+currentQuestion:Math.floor(Math.random()*questions.length),
+answered:false,
+showCorrect:false,
+selected:-1
+});
 }
 
-function wrongAnswer(){
-  let p=players[currentPlayer];
-  p.wrong++;
-  hostBox.innerHTML=`Galat jawab! ${p.name}, thoda sambhal ke 😭`;
+window.useFifty=async()=>{
+let idList=ids(),currentId=idList[data.turn%idList.length];
+if(currentId!==pid)return alert("Not your turn");
+let p=data.players[pid];
+if(p.fifty)return alert("Already used");
+await update(ref(db,"crorepatiRooms/"+room+"/players/"+pid),{fifty:true});
+alert("Use your brain macha: remove two funny wrong options mentally 😄");
+};
 
-  if(p.wrong>=2){
-    hostBox.innerHTML=`${p.name} is eliminated!`;
-  }
+window.useAudience=async()=>{
+let idList=ids(),currentId=idList[data.turn%idList.length];
+if(currentId!==pid)return alert("Not your turn");
+let p=data.players[pid];
+if(p.audience)return alert("Already used");
+await update(ref(db,"crorepatiRooms/"+room+"/players/"+pid),{audience:true});
+let q=questions[data.currentQuestion];
+alert("Audience mostly says: Option "+String.fromCharCode(65+q.a)+" 👥");
+};
 
-  setTimeout(()=>{
-    nextPlayer();
-  },1800);
-}
+window.useSkip=async()=>{
+let idList=ids(),currentId=idList[data.turn%idList.length];
+if(currentId!==pid)return alert("Not your turn");
+let p=data.players[pid];
+if(p.skip)return alert("Already used");
+await update(ref(db,"crorepatiRooms/"+room+"/players/"+pid),{skip:true});
+await nextTurn();
+};
 
-function nextPlayer(){
-  let alive=players.filter(p=>p.wrong<2 && p.level<14);
-  if(alive.length<=1){
-    endGame();
-    return;
-  }
-
-  do{
-    currentPlayer=(currentPlayer+1)%3;
-  }while(players[currentPlayer].wrong>=2 || players[currentPlayer].level>=14);
-
-  loadQuestion();
-}
-
-function useFifty(){
-  let p=players[currentPlayer];
-  if(p.fifty)return alert("50:50 already used");
-  p.fifty=true;
-
-  let buttons=[...optionsBox.querySelectorAll("button")];
-  let wrongs=[0,1,2,3].filter(i=>i!==currentQ.a);
-  wrongs.sort(()=>Math.random()-.5).slice(0,2).forEach(i=>{
-    buttons[i].style.visibility="hidden";
-  });
-  hostBox.innerHTML="50:50 used! Two wrong options removed ✂️";
-}
-
-function useAudience(){
-  let p=players[currentPlayer];
-  if(p.audience)return alert("Audience Poll already used");
-  p.audience=true;
-
-  let poll=[0,0,0,0];
-  poll[currentQ.a]=Math.floor(Math.random()*25)+55;
-  let remaining=100-poll[currentQ.a];
-  for(let i=0;i<4;i++){
-    if(i!==currentQ.a){
-      let val=Math.floor(Math.random()*remaining);
-      poll[i]=val;
-      remaining-=val;
-    }
-  }
-  poll[poll.length-1]+=remaining;
-
-  hostBox.innerHTML=`
-    Audience Poll 👥<br>
-    A: ${poll[0]}% | B: ${poll[1]}% | C: ${poll[2]}% | D: ${poll[3]}%
-  `;
-}
-
-function useSkip(){
-  let p=players[currentPlayer];
-  if(p.skip)return alert("Skip already used");
-  p.skip=true;
-  hostBox.innerHTML="Question skipped! Smart move 😎";
-  setTimeout(loadQuestion,1000);
-}
-
-function endGame(){
-  clearInterval(timerInterval);
-  game.classList.add("hidden");
-  final.classList.remove("hidden");
-
-  let sorted=[...players].sort((a,b)=>{
-    let av=money.indexOf(a.money), bv=money.indexOf(b.money);
-    return bv-av;
-  });
-
-  winnerText.innerHTML=`
-    🏆 Winner: ${sorted[0].name}<br>
-    Prize: ${sorted[0].money}<br><br>
-    🥇 ${sorted[0].name}: ${sorted[0].money}<br>
-    🥈 ${sorted[1].name}: ${sorted[1].money}<br>
-    🥉 ${sorted[2].name}: ${sorted[2].money}
-  `;
+function showWinner(){
+clearInterval(timerInt);
+home.classList.add("hidden");
+lobby.classList.add("hidden");
+game.classList.add("hidden");
+final.classList.remove("hidden");
+winnerText.innerHTML="🏆 Winner: "+data.winner+"<br><br>Game over!";
 }
 </script>
 </body>
