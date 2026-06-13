@@ -1,365 +1,326 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>3 Player Bluff Battle</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>3 Player Game Hub</title>
 <style>
-*{box-sizing:border-box;font-family:Poppins,Arial,sans-serif}
+*{box-sizing:border-box;font-family:Poppins,Arial}
 body{
-  margin:0;min-height:100vh;
-  background:radial-gradient(circle at top,#243b55,#141e30 70%);
-  color:white;display:flex;justify-content:center;align-items:center;padding:18px;
+margin:0;min-height:100vh;color:white;padding:15px;
+background:radial-gradient(circle at top,#ffafcc 0,#3a0ca3 35%,#111827 80%);
 }
-.app{
-  width:100%;max-width:900px;background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.2);border-radius:25px;
-  padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.4);
-}
-h1{text-align:center;margin:5px 0 10px;font-size:32px}
-.sub{text-align:center;color:#d8e6ff;margin-bottom:18px}
+.app{max-width:950px;margin:auto}
+h1{text-align:center;margin:10px 0;font-size:34px}
 .card{
-  background:rgba(255,255,255,.13);border-radius:20px;padding:18px;margin:14px 0;
-  border:1px solid rgba(255,255,255,.12)
+background:rgba(255,255,255,.13);backdrop-filter:blur(14px);
+border:1px solid rgba(255,255,255,.22);border-radius:24px;
+padding:18px;margin:14px 0;box-shadow:0 20px 45px #0006
 }
-.row{display:flex;gap:12px;flex-wrap:wrap}
 input,button,select{
-  border:none;border-radius:14px;padding:13px;font-size:16px
+width:100%;padding:14px;border:0;border-radius:15px;margin:7px 0;font-size:16px
 }
-input{flex:1;min-width:160px}
-button{
-  cursor:pointer;font-weight:700;background:#ffd166;color:#211;
-  transition:.2s;box-shadow:0 6px 0 #b8860b
-}
-button:hover{transform:translateY(-2px)}
-button:active{transform:translateY(3px);box-shadow:0 2px 0 #b8860b}
-button.alt{background:#80ed99;box-shadow:0 6px 0 #248232}
-button.danger{background:#ff6b6b;box-shadow:0 6px 0 #9b2226;color:white}
-button.blue{background:#7bdff2;box-shadow:0 6px 0 #0077b6}
+button{font-weight:900;background:#ffd166;color:#111;cursor:pointer}
+.green{background:#80ed99}.pink{background:#ffafcc}.blue{background:#90dbf4}.red{background:#ff6b6b;color:white}
 .hidden{display:none}
-.players{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.player{
-  text-align:center;background:rgba(0,0,0,.25);border-radius:18px;padding:14px
+.room{text-align:center;color:#ffd166;font-size:30px;font-weight:900;letter-spacing:3px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.player{text-align:center;background:#0005;border-radius:18px;padding:13px}
+.badge{display:inline-block;background:#ffd166;color:#111;padding:7px 12px;border-radius:99px;margin:4px;font-weight:900}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.cell{
+aspect-ratio:1/1;background:white;color:#111;border-radius:13px;
+display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px
 }
-.avatar{font-size:38px}
-.score{font-size:24px;color:#ffd166;font-weight:800}
-.big{
-  text-align:center;font-size:24px;line-height:1.5
+.marked{background:#80ed99;text-decoration:line-through}
+.sudoku{
+display:grid;grid-template-columns:repeat(9,1fr);gap:2px;background:#111;padding:4px;border-radius:12px
 }
-.roleBox{
-  text-align:center;font-size:28px;font-weight:900;padding:22px;border-radius:20px;
-  background:linear-gradient(135deg,#ffafcc,#bde0fe);color:#111
+.sudoku input{
+margin:0;border-radius:4px;text-align:center;font-size:20px;font-weight:900;
+aspect-ratio:1/1;padding:0;background:white;color:#111
 }
-.choiceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.choiceGrid button{min-height:80px}
-.log{
-  max-height:180px;overflow:auto;background:rgba(0,0,0,.35);
-  padding:12px;border-radius:15px;font-size:14px;color:#eef
-}
-.badge{
-  display:inline-block;background:#ffd166;color:#111;padding:6px 12px;border-radius:99px;
-  margin:4px;font-weight:800
-}
-.pulse{animation:pulse .7s infinite alternate}
-@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.04)}}
-@media(max-width:700px){
-  .players,.choiceGrid{grid-template-columns:1fr}
-  h1{font-size:26px}
-}
+.sudoku input.fixed{background:#ffd166;color:#111}
+.sudoku input.bad{background:#ff6b6b;color:white}
+.sudoku input.good{background:#80ed99;color:#111}
+.sudoku input:nth-child(3n){border-right:3px solid #111}
+.sudoku input:nth-child(n+19):nth-child(-n+27),
+.sudoku input:nth-child(n+46):nth-child(-n+54){border-bottom:3px solid #111}
+.big{text-align:center;font-size:26px;font-weight:900;color:#80ed99}
+@media(max-width:700px){.grid3{grid-template-columns:1fr}h1{font-size:27px}.cell{font-size:18px}}
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>🎭 3 Player Bluff Battle</h1>
-  <div class="sub">Secret roles • Bluffing • Voting • Treasure stealing • Full fun party game</div>
+<h1>🎮 3 Player Game Hub</h1>
 
-  <div id="setup" class="card">
-    <h2>Enter 3 Players</h2>
-    <div class="row">
-      <input id="p1" placeholder="Player 1 name" value="Player 1">
-      <input id="p2" placeholder="Player 2 name" value="Player 2">
-      <input id="p3" placeholder="Player 3 name" value="Player 3">
-    </div>
-    <br>
-    <button onclick="startGame()" class="alt">Start Game 🚀</button>
-  </div>
-
-  <div id="game" class="hidden">
-    <div class="players" id="scoreBoard"></div>
-
-    <div class="card big">
-      <div>Round <span id="roundNo">1</span> / 7</div>
-      <div id="phaseText">Ready</div>
-    </div>
-
-    <div id="passScreen" class="card big">
-      <p id="passText"></p>
-      <button onclick="showRole()" class="blue">I am alone, show my secret 👀</button>
-    </div>
-
-    <div id="roleScreen" class="card hidden">
-      <div class="roleBox" id="roleBox"></div>
-      <p class="big" id="roleInfo"></p>
-      <button onclick="hideRole()" class="danger">Hide and pass phone 🙈</button>
-    </div>
-
-    <div id="actionScreen" class="card hidden">
-      <h2 id="actionTitle"></h2>
-      <div class="choiceGrid" id="actionChoices"></div>
-    </div>
-
-    <div id="voteScreen" class="card hidden">
-      <h2>🗳️ Vote: Who is the Thief?</h2>
-      <p>Discuss, bluff, lie, shout, defend yourself. Then each player votes.</p>
-      <div id="voteArea"></div>
-    </div>
-
-    <div id="resultScreen" class="card hidden">
-      <h2>Round Result ⚡</h2>
-      <div id="resultText" class="big"></div>
-      <button onclick="nextRound()" class="alt">Next Round ➜</button>
-    </div>
-
-    <div id="finalScreen" class="card hidden">
-      <h2>🏆 Final Winner</h2>
-      <div id="winnerText" class="big pulse"></div>
-      <button onclick="location.reload()" class="alt">Play Again 🔁</button>
-    </div>
-
-    <div class="card">
-      <h3>Game Log</h3>
-      <div id="log" class="log"></div>
-    </div>
-  </div>
+<div id="home" class="card">
+<input id="nameInput" placeholder="Your name">
+<button class="green" onclick="createRoom()">Create Room</button>
+<input id="roomInput" placeholder="Enter Room Code">
+<button class="blue" onclick="joinRoom()">Join Room</button>
 </div>
 
-<script>
-let players=[], round=1, maxRounds=7;
-let currentReveal=0, currentAction=0, currentVote=0;
-let roles=[], actions=[], votes=[];
-let treasures=["💎 Diamond","👑 Crown","🗝️ Golden Key","🔥 Fire Gem","🪙 Ancient Coin","🐉 Dragon Egg","🌙 Moon Crystal"];
+<div id="lobby" class="card hidden">
+<p>Room Code</p>
+<div class="room" id="roomText"></div>
+<h3>Players</h3>
+<div class="grid3" id="playersBox"></div>
+<h3>Choose Game</h3>
+<button class="green" onclick="startBingo()">🎯 Start Bingo Battle</button>
+<button class="pink" onclick="startSudoku()">🧠 Start Sudoku Race</button>
+</div>
 
-const roleData = {
-  "Guardian": {
-    emoji:"🛡️",
-    info:"Protect treasure. If thief is caught, you get bonus points."
-  },
-  "Thief": {
-    emoji:"🗡️",
-    info:"Steal secretly. Convince others you are innocent."
-  },
-  "Trickster": {
-    emoji:"🎭",
-    info:"Create confusion. You score if vote goes wrong."
-  }
+<div id="bingo" class="hidden">
+<div class="card">
+<h2>🎯 Bingo Battle</h2>
+<p id="turnText"></p>
+<button id="callBtn" onclick="callNumber()">Call Number 🎲</button>
+</div>
+<div class="card"><h3>Called Numbers</h3><div id="calledBox"></div></div>
+<div class="card"><h3>Your Board</h3><div class="board" id="bingoBoard"></div></div>
+<div class="card"><h3>Leaderboard</h3><div class="grid3" id="bingoScores"></div></div>
+</div>
+
+<div id="sudoku" class="hidden">
+<div class="card">
+<h2>🧠 Sudoku Race</h2>
+<p>Solve fast. Wrong entries reduce your score.</p>
+<div class="big" id="timerBox">00:00</div>
+</div>
+<div class="card"><div class="sudoku" id="sudokuGrid"></div></div>
+<div class="card"><h3>Leaderboard</h3><div class="grid3" id="sudokuScores"></div></div>
+</div>
+
+<div id="winnerBox" class="card hidden">
+<div class="big" id="winnerText"></div>
+<button class="green" onclick="location.reload()">Play Again</button>
+</div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getDatabase,ref,set,update,onValue,get}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+apiKey:"PASTE",
+authDomain:"PASTE",
+databaseURL:"PASTE",
+projectId:"PASTE",
+storageBucket:"PASTE",
+messagingSenderId:"PASTE",
+appId:"PASTE"
 };
 
-function startGame(){
-  players=[
-    {name:p1.value||"Player 1",score:0,emoji:"🐯"},
-    {name:p2.value||"Player 2",score:0,emoji:"🦊"},
-    {name:p3.value||"Player 3",score:0,emoji:"🐼"}
-  ];
-  setup.classList.add("hidden");
-  game.classList.remove("hidden");
-  newRound();
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+let room="",pid="",pname="",data=null,timerInt=null,startTime=0;
+
+const puzzle=[
+5,3,0,0,7,0,0,0,0,
+6,0,0,1,9,5,0,0,0,
+0,9,8,0,0,0,0,6,0,
+8,0,0,0,6,0,0,0,3,
+4,0,0,8,0,3,0,0,1,
+7,0,0,0,2,0,0,0,6,
+0,6,0,0,0,0,2,8,0,
+0,0,0,4,1,9,0,0,5,
+0,0,0,0,8,0,0,7,9
+];
+
+const solution=[
+5,3,4,6,7,8,9,1,2,
+6,7,2,1,9,5,3,4,8,
+1,9,8,3,4,2,5,6,7,
+8,5,9,7,6,1,4,2,3,
+4,2,6,8,5,3,7,9,1,
+7,1,3,9,2,4,8,5,6,
+9,6,1,5,3,7,2,8,4,
+2,8,7,4,1,9,6,3,5,
+3,4,5,2,8,6,1,7,9
+];
+
+function board(){
+let a=[];for(let i=1;i<=25;i++)a.push(i);
+return a.sort(()=>Math.random()-.5);
 }
 
-function renderScores(){
-  scoreBoard.innerHTML=players.map(p=>`
-    <div class="player">
-      <div class="avatar">${p.emoji}</div>
-      <h3>${p.name}</h3>
-      <div class="score">${p.score} pts</div>
-    </div>
-  `).join("");
+window.createRoom=async()=>{
+pname=nameInput.value.trim();
+if(!pname)return alert("Enter name macha");
+room=Math.random().toString(36).substring(2,8).toUpperCase();
+pid="p"+Date.now();
+await set(ref(db,"gameHub/"+room),{
+host:pid,status:"lobby",game:"",turn:0,called:[],winner:"",
+startTime:0,
+players:{[pid]:{name:pname,bingo:board(),sudoku:[...puzzle],mistakes:0,finished:false,time:0}}
+});
+enter();
+};
+
+window.joinRoom=async()=>{
+pname=nameInput.value.trim();
+room=roomInput.value.trim().toUpperCase();
+if(!pname||!room)return alert("Enter name and room code");
+let snap=await get(ref(db,"gameHub/"+room));
+if(!snap.exists())return alert("Room not found");
+let d=snap.val();
+if(Object.keys(d.players||{}).length>=3)return alert("Room full");
+pid="p"+Date.now();
+await update(ref(db,"gameHub/"+room+"/players/"+pid),{
+name:pname,bingo:board(),sudoku:[...puzzle],mistakes:0,finished:false,time:0
+});
+enter();
+};
+
+function enter(){
+home.classList.add("hidden");
+lobby.classList.remove("hidden");
+roomText.innerText=room;
+onValue(ref(db,"gameHub/"+room),snap=>{
+data=snap.val();if(!data)return;
+renderPlayers();
+if(data.game==="bingo")showBingo();
+if(data.game==="sudoku")showSudoku();
+if(data.winner)showWinner(data.winner);
+});
 }
 
-function logMsg(msg){
-  log.innerHTML = "• " + msg + "<br>" + log.innerHTML;
+function renderPlayers(){
+playersBox.innerHTML=Object.values(data.players||{}).map(p=>`
+<div class="player">👤<br><b>${p.name}</b></div>`).join("");
 }
 
-function shuffle(arr){
-  return arr.sort(()=>Math.random()-.5);
-}
+window.startBingo=async()=>{
+if(data.host!==pid)return alert("Only host can start");
+if(Object.keys(data.players).length!==3)return alert("Need 3 players");
+await update(ref(db,"gameHub/"+room),{game:"bingo",status:"playing",turn:0,called:[],winner:""});
+};
 
-function newRound(){
-  renderScores();
-  roundNo.textContent=round;
-  phaseText.textContent="Secret role reveal";
-  roles=shuffle(["Guardian","Thief","Trickster"]);
-  actions=[];
-  votes=[];
-  currentReveal=0;
-  currentAction=0;
-  currentVote=0;
-  hideAll();
-  passScreen.classList.remove("hidden");
-  passText.textContent=`Pass phone to ${players[currentReveal].name}`;
-}
+window.startSudoku=async()=>{
+if(data.host!==pid)return alert("Only host can start");
+if(Object.keys(data.players).length!==3)return alert("Need 3 players");
+await update(ref(db,"gameHub/"+room),{game:"sudoku",status:"playing",winner:"",startTime:Date.now()});
+};
 
 function hideAll(){
-  [passScreen,roleScreen,actionScreen,voteScreen,resultScreen,finalScreen].forEach(x=>x.classList.add("hidden"));
+lobby.classList.add("hidden");bingo.classList.add("hidden");sudoku.classList.add("hidden");
 }
 
-function showRole(){
-  hideAll();
-  roleScreen.classList.remove("hidden");
-  let role=roles[currentReveal];
-  roleBox.textContent=`${players[currentReveal].name}: ${roleData[role].emoji} ${role}`;
-  roleInfo.textContent=roleData[role].info;
+function showBingo(){
+hideAll();bingo.classList.remove("hidden");
+let ids=Object.keys(data.players);
+let current=ids[data.turn%ids.length];
+turnText.innerHTML="Turn: <b>"+data.players[current].name+"</b>";
+callBtn.disabled=current!==pid||data.winner;
+renderBingoBoard();renderCalled();renderBingoScores();
 }
 
-function hideRole(){
-  currentReveal++;
-  hideAll();
-  if(currentReveal<3){
-    passScreen.classList.remove("hidden");
-    passText.textContent=`Pass phone to ${players[currentReveal].name}`;
-  }else{
-    startActions();
-  }
+window.callNumber=async()=>{
+let called=data.called||[];
+let available=[];
+for(let i=1;i<=25;i++)if(!called.includes(i))available.push(i);
+let num=available[Math.floor(Math.random()*available.length)];
+called.push(num);
+let ids=Object.keys(data.players);
+await update(ref(db,"gameHub/"+room),{called,turn:(data.turn+1)%ids.length});
+};
+
+function renderBingoBoard(){
+let me=data.players[pid];
+let called=data.called||[];
+bingoBoard.innerHTML=me.bingo.map(n=>`
+<div class="cell ${called.includes(n)?"marked":""}">${n}</div>`).join("");
+let lines=countLines(me.bingo,called);
+if(lines>=5&&!data.winner)update(ref(db,"gameHub/"+room),{winner:me.name+" won Bingo 🎯"});
 }
 
-function startActions(){
-  phaseText.textContent="Secret actions";
-  currentAction=0;
-  showAction();
+function renderCalled(){
+calledBox.innerHTML=(data.called||[]).map(n=>`<span class="badge">${n}</span>`).join("");
 }
 
-function showAction(){
-  hideAll();
-  actionScreen.classList.remove("hidden");
-  let p=players[currentAction];
-  let role=roles[currentAction];
-  actionTitle.textContent=`${p.name}, choose your secret action`;
-
-  let choices=[];
-  if(role==="Guardian"){
-    choices=[
-      ["Protect Treasure 🛡️","protect"],
-      ["Spy Someone 👀","spy"],
-      ["Fake Suspicion 🎭","fake"]
-    ];
-  }else if(role==="Thief"){
-    choices=[
-      ["Steal Treasure 🗡️","steal"],
-      ["Frame Someone 😈","frame"],
-      ["Act Innocent 😇","innocent"]
-    ];
-  }else{
-    choices=[
-      ["Confuse Everyone 🌪️","confuse"],
-      ["Swap Clues 🔄","swap"],
-      ["Drama Speech 🎤","drama"]
-    ];
-  }
-
-  actionChoices.innerHTML=choices.map(c=>`
-    <button onclick="pickAction('${c[1]}')">${c[0]}</button>
-  `).join("");
+function countLines(b,called){
+let g=[];for(let i=0;i<5;i++)g.push(b.slice(i*5,i*5+5));
+let l=0;
+for(let r=0;r<5;r++)if(g[r].every(n=>called.includes(n)))l++;
+for(let c=0;c<5;c++)if([0,1,2,3,4].every(r=>called.includes(g[r][c])))l++;
+if([0,1,2,3,4].every(i=>called.includes(g[i][i])))l++;
+if([0,1,2,3,4].every(i=>called.includes(g[i][4-i])))l++;
+return l;
 }
 
-function pickAction(act){
-  actions[currentAction]=act;
-  logMsg(`${players[currentAction].name} locked a secret action.`);
-  currentAction++;
-  if(currentAction<3){
-    showAction();
-  }else{
-    startVoting();
-  }
+function renderBingoScores(){
+bingoScores.innerHTML=Object.values(data.players).map(p=>{
+let l=countLines(p.bingo,data.called||[]);
+return `<div class="player"><b>${p.name}</b><br>${l}/5 lines</div>`;
+}).join("");
 }
 
-function startVoting(){
-  hideAll();
-  phaseText.textContent="Discussion and voting";
-  voteScreen.classList.remove("hidden");
-  currentVote=0;
-  renderVote();
+function showSudoku(){
+hideAll();sudoku.classList.remove("hidden");
+renderSudoku();
+renderSudokuScores();
+startTimer();
 }
 
-function renderVote(){
-  voteArea.innerHTML=`
-    <div class="card">
-      <h3>${players[currentVote].name}, who do you think is the Thief?</h3>
-      <div class="row">
-        ${players.map((p,i)=>`<button onclick="castVote(${i})">${p.name}</button>`).join("")}
-      </div>
-    </div>
-  `;
+function renderSudoku(){
+let me=data.players[pid];
+sudokuGrid.innerHTML=me.sudoku.map((v,i)=>{
+let fixed=puzzle[i]!==0;
+return `<input maxlength="1" value="${v||""}" ${fixed?"disabled":""}
+class="${fixed?"fixed":""}" oninput="sudokuInput(${i},this.value,this)">`;
+}).join("");
 }
 
-function castVote(i){
-  votes[currentVote]=i;
-  logMsg(`${players[currentVote].name} voted.`);
-  currentVote++;
-  if(currentVote<3) renderVote();
-  else calculateResult();
+window.sudokuInput=async(i,val,el)=>{
+val=parseInt(val)||0;
+let me=data.players[pid];
+let arr=[...me.sudoku];
+arr[i]=val;
+let mistakes=me.mistakes||0;
+if(val&&val!==solution[i]){mistakes++;el.className="bad"}
+else if(val===solution[i])el.className="good";
+await update(ref(db,"gameHub/"+room+"/players/"+pid),{sudoku:arr,mistakes});
+checkSudokuWin(arr,mistakes);
+};
+
+function checkSudokuWin(arr,mistakes){
+let done=arr.every((v,i)=>v===solution[i]);
+if(done&&!data.winner){
+let seconds=Math.floor((Date.now()-data.startTime)/1000);
+update(ref(db,"gameHub/"+room+"/players/"+pid),{finished:true,time:seconds});
+update(ref(db,"gameHub/"+room),{winner:pname+" won Sudoku 🧠 in "+seconds+" sec"});
+}
 }
 
-function calculateResult(){
-  hideAll();
-  resultScreen.classList.remove("hidden");
-
-  let thiefIndex=roles.indexOf("Thief");
-  let guardianIndex=roles.indexOf("Guardian");
-  let tricksterIndex=roles.indexOf("Trickster");
-
-  let count=[0,0,0];
-  votes.forEach(v=>count[v]++);
-  let accused=count.indexOf(Math.max(...count));
-
-  let treasure=treasures[Math.floor(Math.random()*treasures.length)];
-  let text=`<p>Treasure of this round: <span class="badge">${treasure}</span></p>`;
-  text+=`<p>Real Thief was <b>${players[thiefIndex].name}</b> 🗡️</p>`;
-  text+=`<p>Most voted player: <b>${players[accused].name}</b></p>`;
-
-  if(accused===thiefIndex){
-    players[guardianIndex].score+=4;
-    players.filter((_,i)=>votes[i]===thiefIndex).forEach(p=>p.score+=2);
-    text+=`<p>✅ Thief caught! Guardian gets +4. Correct voters get +2.</p>`;
-  }else{
-    players[thiefIndex].score+=5;
-    players[tricksterIndex].score+=3;
-    text+=`<p>❌ Wrong vote! Thief escapes +5. Trickster enjoys chaos +3.</p>`;
-  }
-
-  actions.forEach((a,i)=>{
-    if(a==="steal") players[i].score+=1;
-    if(a==="protect") players[i].score+=1;
-    if(a==="confuse") players[i].score+=1;
-    if(a==="spy") players[i].score+=1;
-    if(a==="frame") players[i].score+=1;
-    if(a==="drama") players[i].score+=1;
-  });
-
-  text+=`<p>Secret action bonus: selected tactical actions gave +1.</p>`;
-  resultText.innerHTML=text;
-  renderScores();
+function renderSudokuScores(){
+sudokuScores.innerHTML=Object.values(data.players).map(p=>{
+let filled=p.sudoku.filter(x=>x!==0).length;
+return `<div class="player">
+<b>${p.name}</b><br>
+Filled: ${filled}/81<br>
+Mistakes: ${p.mistakes||0}<br>
+${p.finished?"✅ Finished":"⏳ Playing"}
+</div>`;
+}).join("");
 }
 
-function nextRound(){
-  round++;
-  if(round>maxRounds){
-    showFinal();
-  }else{
-    newRound();
-  }
+function startTimer(){
+clearInterval(timerInt);
+timerInt=setInterval(()=>{
+if(!data||!data.startTime)return;
+let s=Math.floor((Date.now()-data.startTime)/1000);
+let m=String(Math.floor(s/60)).padStart(2,"0");
+let sec=String(s%60).padStart(2,"0");
+timerBox.innerText=m+":"+sec;
+},1000);
 }
 
-function showFinal(){
-  hideAll();
-  finalScreen.classList.remove("hidden");
-  phaseText.textContent="Game finished";
-  let sorted=[...players].sort((a,b)=>b.score-a.score);
-  winnerText.innerHTML=`
-    ${sorted[0].emoji} ${sorted[0].name} wins with ${sorted[0].score} points!<br><br>
-    🥇 ${sorted[0].name}: ${sorted[0].score}<br>
-    🥈 ${sorted[1].name}: ${sorted[1].score}<br>
-    🥉 ${sorted[2].name}: ${sorted[2].score}
-  `;
+function showWinner(w){
+winnerBox.classList.remove("hidden");
+winnerText.innerHTML="🏆 "+w;
+if(callBtn)callBtn.disabled=true;
 }
 </script>
 </body>
